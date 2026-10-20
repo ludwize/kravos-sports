@@ -1,0 +1,12 @@
+-keep class net.kravos.sports.widget.** { *; }
+-keep class net.kravos.sports.work.** { *; }
+-keepclassmembers class net.kravos.sports.data.WebBridge$JsBridge { @android.webkit.JavascriptInterface <methods>; }
+-keepattributes JavascriptInterface
+-dontwarn org.checkerframework.**
+-dontwarn com.google.errorprone.annotations.**
+-dontwarn javax.annotation.**
+-dontwarn com.google.j2objc.annotations.**
+-dontwarn okhttp3.internal.platform.**
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.openjsse.**
