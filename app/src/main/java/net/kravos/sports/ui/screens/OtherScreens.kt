@@ -549,7 +549,7 @@ fun SettingsScreen(pad: PaddingValues, release: Release?, onCheckUpdate: () -> U
                     CardTitle("Podaci")
                     Text(
                         "Izvor: SofaScore (nezvanični API, samo za ličnu upotrebu). Veza: " +
-                            (if (app.sofa.useBridge) "preko ugrađenog pregledača (zaobilaženje blokade)" else "direktna") +
+                            (if (app.sofa.useBridge) "preko ugrađenog pregledača — ${app.sofa.bridgeStatus}" else "direktna") +
                             (app.sofa.lastError?.let { "\nPoslednja greška: ${it.take(120)}" } ?: ""),
                         fontSize = 12.sp, color = LocalPalette.current.dim, modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
                     )

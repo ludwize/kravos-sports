@@ -28,8 +28,15 @@ class Sofa(context: Context) {
     private val inflight = ConcurrentHashMap<String, CompletableDeferred<String>>()
     private val gate = Semaphore(6)
 
-    @Volatile var useBridge = false
+    private val sp = context.getSharedPreferences("transport", Context.MODE_PRIVATE)
+
+    /** Once direct access was blocked, go straight through the WebView bridge on later launches too. */
+    @Volatile var useBridge = sp.getBoolean("bridge", false)
         private set
+    val bridgeStatus get() = bridge.status
+
+    /** Start loading the bridge page early so the first request is fast. */
+    fun warmUp() { if (useBridge) bridge.start() }
     @Volatile var lastError: String? = null
         private set
 
@@ -81,6 +88,7 @@ class Sofa(context: Context) {
                     }
                     Log.w(Http.TAG, "direct API blocked (${e.code}); switching to WebView bridge")
                     useBridge = true
+                    sp.edit().putBoolean("bridge", true).apply()
                 } else throw e
             }
         }

@@ -33,6 +33,9 @@ object Http {
                 val b = r.newBuilder().header("User-Agent", BROWSER_UA)
                 val host = r.url.host
                 if (host.contains("sofascore")) {
+                    // share cookies the bridge WebView earned (challenge pass) with direct requests, e.g. images
+                    runCatching { android.webkit.CookieManager.getInstance().getCookie("https://www.sofascore.com") }
+                        .getOrNull()?.takeIf { it.isNotBlank() }?.let { b.header("Cookie", it) }
                     b.header("Referer", "https://www.sofascore.com/")
                     b.header("Origin", "https://www.sofascore.com")
                     b.header("Accept", "*/*")

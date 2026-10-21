@@ -21,6 +21,7 @@ class App : Application(), ImageLoaderFactory {
         Http.init(this)
         prefs = Prefs(this)
         sofa = Sofa(this)
+        sofa.warmUp()
         WidgetWorker.schedule(this)
     }
 
