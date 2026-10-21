@@ -1,0 +1,2 @@
+403 https://api.sofascore.com/api/v1/sport/football/events/live {"error": {"code": 403, "reason": "Forbidden" }}
+403 https://www.sofascore.com/api/v1/sport/football/events/live {"error": {"code": 403, "reason": "Forbidden" }}
