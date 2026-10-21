@@ -18,7 +18,7 @@ class Espn(private val net: Net) {
         val q = if (wide) "${date.minusDays(3).format(YMD)}-${date.plusDays(3).format(YMD)}" else date.format(YMD)
         val body = net.get("$S/$path/scoreboard?dates=$q", if (today) 20 else 300)
         return withContext(Dispatchers.Default) { parse(JSONObject(body), sport, path) }
-            .filter { e -> if (!wide) true else net.kravos.sports.ui.Fmt.localDate(e.start) == date }
+            .filter { e -> if (!wide) true else java.time.Instant.ofEpochSecond(e.start).atZone(java.time.ZoneId.systemDefault()).toLocalDate() == date }
     }
 
     private fun status(s: JSONObject?): Pair<Status, String?> {
