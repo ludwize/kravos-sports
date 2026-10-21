@@ -33,14 +33,3 @@ shot 40-leagues
 not found: Premijer liga
 shot 41-pl-table
 not found: Igrači
-shot 42-pl-players
-not found: Pretraga
-not found: Tim, liga ili igrač…
-shot 50-search
-not found: Omiljeno
-shot 51-search-star
-not found: Omiljeno
-shot 52-favorites
-not found: Rezultati
-not found: Podešavanja
-shot 60-settings
