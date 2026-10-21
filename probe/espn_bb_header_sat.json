@@ -1,0 +1,1 @@
+{"code":400,"message":"Error invoking GET: http://site.api.internal.espn.com/apis/common/v2/event/header?dates=20261018&sport=basketball, status=400, duration=6 ms, message=null, cache=CACHE_MISS"}
