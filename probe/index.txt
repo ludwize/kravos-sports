@@ -1,25 +1,44 @@
-200 soccer-all 744198
-200 ucl 101010
-200 eng1 15270
-400 srb1 80
-200 basket-nba 74830
-200 basket-euroleague 592
-200 basket-fiba 14842
-200 tennis-atp 355421
-200 tennis-wta 280149
-200 hockey-nhl 329401
-200 f1 11099
-404 rugby 12
-200 mma 37580
-200 nfl 254286
-200 soccer-leagues 22118
-200 eng1-standings 68813
-200 nba-standings 158228
-200 eng1-teams 24942
-200 search 5315
-200 ucl-summary 446895
-200 nba-summary 458838
-400 atp-summary 188
-200 team-schedule 66857
-200 team 21140
-200 soccer-dated 765924
+200    811729  header_soccer  https://site.web.api.espn.com/apis/v2/scoreboard/header?sport=soccer&dates=20261020
+200    456085  header_all  https://site.web.api.espn.com/apis/v2/scoreboard/header?dates=20261021
+200    744198  soccer_all_scoreboard  https://site.api.espn.com/apis/site/v2/sports/soccer/all/scoreboard?dates=20261020
+200     22118  core_soccer_leagues  https://sports.core.api.espn.com/v2/sports/soccer/leagues?limit=400
+200      1675  core_basketball_leagues  https://sports.core.api.espn.com/v2/sports/basketball/leagues?limit=200
+200    101010  sb_uefa.champions  https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard?dates=20261020
+200      2503  sb_eng.1  https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=20261020
+400        80  sb_srb.1  https://site.api.espn.com/apis/site/v2/sports/soccer/srb.1/scoreboard?dates=20261020
+200      2447  sb_esp.1  https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=20261020
+200      1786  sb_uefa.europa  https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa/scoreboard?dates=20261020
+200      1818  sb_uefa.europa.conf  https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa.conf/scoreboard?dates=20261020
+200      1821  sb_fifa.world  https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=20261020
+400        80  sb_cl_range  https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard?dates=20261007-20261021
+200     68813  standings_eng1  https://site.api.espn.com/apis/v2/sports/soccer/eng.1/standings
+400       100  standings_srb1  https://site.api.espn.com/apis/v2/sports/soccer/srb.1/standings
+200     24942  teams_eng1  https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/teams
+200     66059  team_sched  https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/teams/359/schedule
+200     26160  search  https://site.web.api.espn.com/apis/search/v2?query=partizan&limit=10
+404       116  leaders_eng1  https://site.web.api.espn.com/apis/site/v3/sports/soccer/eng.1/leaders
+200     74830  sb_nba  https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=20261020
+200    457342  summary_nba  https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909088
+200       532  sb_bb_euroleague  https://site.api.espn.com/apis/site/v2/sports/basketball/euroleague/scoreboard?dates=20261020
+400        80  sb_bb_mens-euroleague  https://site.api.espn.com/apis/site/v2/sports/basketball/mens-euroleague/scoreboard?dates=20261020
+200       755  sb_bb_fiba  https://site.api.espn.com/apis/site/v2/sports/basketball/fiba/scoreboard?dates=20261020
+400        80  sb_bb_eurocup  https://site.api.espn.com/apis/site/v2/sports/basketball/eurocup/scoreboard?dates=20261020
+200    713852  el_games  https://api-live.euroleague.net/v2/competitions/E/seasons/E2026/games
+405       266  el_standings  https://api-live.euroleague.net/v2/competitions/E/seasons/E2026/rounds/1/basicstandings
+200       933  el_header  https://live.euroleague.net/api/Header?gamecode=1&seasoncode=E2026
+200     13718  el_boxscore  https://live.euroleague.net/api/Boxscore?gamecode=1&seasoncode=E2026
+200    189602  el_pbp  https://live.euroleague.net/api/PlayByPlay?gamecode=1&seasoncode=E2026
+200    989294  aba_test  https://www.aba-liga.com/calendar.php?lang=en
+200    355521  sb_tennis_atp  https://site.api.espn.com/apis/site/v2/sports/tennis/atp/scoreboard
+200    280049  sb_tennis_wta  https://site.api.espn.com/apis/site/v2/sports/tennis/wta/scoreboard
+200    329461  sb_hockey_nhl  https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard
+200     11099  sb_racing_f1  https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard
+200     37580  sb_mma_ufc  https://site.api.espn.com/apis/site/v2/sports/mma/ufc/scoreboard
+200    254241  sb_football_nfl  https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard
+200     23099  sb_baseball_mlb  https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard
+400        80  sb_volleyball_fivb  https://site.api.espn.com/apis/site/v2/sports/volleyball/fivb/scoreboard
+400        80  sb_handball_ehf  https://site.api.espn.com/apis/site/v2/sports/handball/ehf/scoreboard
+200      6398  sb_rugby_164205  https://site.api.espn.com/apis/site/v2/sports/rugby/164205/scoreboard
+200     10906  sb_cricket_8676  https://site.api.espn.com/apis/site/v2/sports/cricket/8676/scoreboard
+200     87132  sb_f1_range  https://site.api.espn.com/apis/site/v2/sports/racing/f1/scoreboard?dates=20261001-20261031
+200      1429  core_sports  https://sports.core.api.espn.com/v2/sports?limit=100
