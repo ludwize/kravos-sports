@@ -48,7 +48,7 @@ import java.io.File
 import java.time.LocalDate
 
 data class WidgetItem(
-    val id: Int, val home: String, val away: String, val hs: String, val as_: String,
+    val id: String, val home: String, val away: String, val hs: String, val as_: String,
     val status: String, val live: Boolean, val finished: Boolean, val start: Long, val league: String,
 )
 
@@ -56,24 +56,24 @@ object WidgetData {
     private fun file(ctx: Context) = File(ctx.filesDir, "widget.json")
 
     /** Live first, then today's, then the next upcoming and the most recent result of each favourite. */
-    fun pick(evs: List<Event>, fav: Set<Int>): List<WidgetItem> {
+    fun pick(evs: List<Event>, fav: Set<String>): List<WidgetItem> {
         val now = System.currentTimeMillis() / 1000
         val today = LocalDate.now()
         val live = evs.filter { it.status.live }
         val todays = evs.filter { !it.status.live && Fmt.localDate(it.start) == today }
         val perTeam = fav.flatMap { id ->
-            val mine = evs.filter { it.home.id == id || it.away.id == id }
+            val mine = evs.filter { it.home.key == id || it.away.key == id }
             listOfNotNull(
                 mine.filter { it.status.finished }.maxByOrNull { it.start },
                 mine.filter { it.status.notStarted && it.start > now }.minByOrNull { it.start },
             )
         }
-        return (live + todays + perTeam).distinctBy { it.id }
+        return (live + todays + perTeam).distinctBy { it.key }
             .sortedWith(compareBy<Event> { !it.status.live }.thenBy { kotlin.math.abs(it.start - now) })
             .take(8)
             .map {
                 WidgetItem(
-                    it.id, it.home.shortName, it.away.shortName,
+                    it.key, it.home.shortName, it.away.shortName,
                     (it.homeScore.display ?: it.homeScore.current)?.toString() ?: "",
                     (it.awayScore.display ?: it.awayScore.current)?.toString() ?: "",
                     when {
@@ -100,7 +100,7 @@ object WidgetData {
         val o = JSONObject(file(ctx).readText())
         val a = o.getJSONArray("items")
         (0 until a.length()).map { a.getJSONObject(it) }.map {
-            WidgetItem(it.getInt("id"), it.getString("h"), it.getString("a"), it.optString("hs"), it.optString("as"),
+            WidgetItem(it.getString("id"), it.getString("h"), it.getString("a"), it.optString("hs"), it.optString("as"),
                 it.optString("st"), it.optBoolean("live"), it.optBoolean("fin"), it.optLong("t"), it.optString("lg"))
         } to o.optLong("at")
     }.getOrDefault(emptyList<WidgetItem>() to 0L)

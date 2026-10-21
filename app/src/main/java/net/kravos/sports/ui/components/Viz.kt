@@ -41,7 +41,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import net.kravos.sports.data.AvgPosition
 import net.kravos.sports.data.HeatPoint
 import net.kravos.sports.data.LineupPlayer
 import net.kravos.sports.data.MomentumPoint
@@ -190,24 +189,6 @@ fun HeatmapPitch(points: List<HeatPoint>, modifier: Modifier = Modifier, attackR
 
 private fun Modifier.matchParentSizeCompat() = this.then(Modifier.fillMaxWidth().aspectRatio(105f / 68f))
 
-// ---------- average positions ----------
-
-@Composable
-fun AveragePositionsPitch(pos: List<AvgPosition>, color: Color, onPlayer: (Int) -> Unit) {
-    BoxWithConstraints(Modifier.fillMaxWidth().aspectRatio(105f / 68f).clip(RoundedCornerShape(10.dp)).background(pitchBrush())) {
-        val w = maxWidth; val h = maxHeight
-        Canvas(Modifier.matchParentSizeCompat()) { drawPitchHorizontal() }
-        pos.forEach { p ->
-            val d = 22.dp
-            Box(
-                Modifier.offset(w * (p.x / 100f) - d / 2, h * (p.y / 100f) - d / 2).size(d).clip(CircleShape).background(color)
-                    .clickable { onPlayer(p.playerId) },
-                contentAlignment = Alignment.Center,
-            ) { Text(p.number ?: "", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold) }
-        }
-    }
-}
-
 // ---------- shot map ----------
 
 @Composable
@@ -306,6 +287,16 @@ fun LineupPitch(
         Canvas(Modifier.fillMaxWidth().aspectRatio(68f / 105f)) { drawPitchVertical() }
         @Composable
         fun side(players: List<LineupPlayer>, formation: String?, color: Color, isHome: Boolean) {
+            if (players.isNotEmpty() && players.all { it.px != null && it.py != null }) {
+                players.forEach { p ->
+                    // source layout: x 0..1 across (team's own view), y 0..1 from own goal (GK ~0.1)
+                    val fy = (p.py!! * 0.5f).coerceIn(0.03f, 0.48f)
+                    val y = if (isHome) h * (1f - fy) else h * fy
+                    val x = if (isHome) w * p.px!! else w * (1f - p.px!!)
+                    PlayerDot(p, color, Modifier.offset(x - 34.dp, y - 20.dp)) { onPlayer(p, isHome) }
+                }
+                return
+            }
             val rows = formationRows(formation, players)
             val n = rows.size
             rows.forEachIndexed { ri, row ->
@@ -332,6 +323,10 @@ private fun PlayerDot(p: LineupPlayer, color: Color, modifier: Modifier, onClick
             Box(Modifier.size(28.dp).clip(CircleShape).background(color), contentAlignment = Alignment.Center) {
                 Text(p.number ?: "", color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Bold)
             }
+            if (p.events.any { it == "goal" }) Text("⚽", fontSize = 10.sp, modifier = Modifier.offset((-8).dp, (-4).dp))
+            if (p.events.any { it == "yellowCard" }) Box(Modifier.offset(22.dp, 16.dp).size(7.dp, 10.dp).background(K.Yellow))
+            if (p.events.any { it == "redCard" }) Box(Modifier.offset(22.dp, 16.dp).size(7.dp, 10.dp).background(K.Loss))
+            if (p.events.any { it == "subOut" }) Text("↓", color = K.Loss, fontSize = 10.sp, fontWeight = FontWeight.Bold, modifier = Modifier.offset((-8).dp, 14.dp))
             p.rating?.let { r ->
                 Box(
                     Modifier.offset(16.dp, (-5).dp).clip(RoundedCornerShape(5.dp)).background(ratingColor(r)).padding(horizontal = 3.dp),

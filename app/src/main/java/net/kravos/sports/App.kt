@@ -7,21 +7,20 @@ import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import net.kravos.sports.data.Http
 import net.kravos.sports.data.Prefs
-import net.kravos.sports.data.Sofa
+import net.kravos.sports.data.Repo
 import net.kravos.sports.work.WidgetWorker
 
 class App : Application(), ImageLoaderFactory {
     lateinit var prefs: Prefs
         private set
-    lateinit var sofa: Sofa
+    lateinit var repo: Repo
         private set
 
     override fun onCreate() {
         super.onCreate()
         Http.init(this)
         prefs = Prefs(this)
-        sofa = Sofa(this)
-        sofa.warmUp()
+        repo = Repo(this)
         WidgetWorker.schedule(this)
     }
 

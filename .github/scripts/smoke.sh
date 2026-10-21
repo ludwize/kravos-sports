@@ -95,9 +95,11 @@ tap_text "Kraj"; sleep 6; shot 31-bb-match
 tap_text "Igrači"; sleep 4; shot 32-bb-players
 adb shell input keyevent KEYCODE_BACK; sleep 2
 tap_text "Tenis"; sleep 6; shot 33-tennis
+tap_text "Formula 1"; sleep 6; shot 34-f1
+tap_text "Fudbal"; sleep 4
 
 tap_text "Lige"; sleep 5; shot 40-leagues
-tap_text "Premijer liga"; sleep 6; shot 41-pl-table
+tap_text "Premier League"; sleep 6; shot 41-pl-table
 tap_text "Igrači"; sleep 6; shot 42-pl-players
 adb shell input keyevent KEYCODE_BACK; sleep 2
 

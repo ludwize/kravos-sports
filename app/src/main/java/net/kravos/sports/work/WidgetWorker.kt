@@ -28,10 +28,10 @@ class WidgetWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         if (teams.isEmpty()) { WidgetData.save(applicationContext, emptyList()); ScoresWidget.update(applicationContext); return Result.success() }
         return try {
             val evs = coroutineScope {
-                teams.map { t -> async { runCatching { app.sofa.teamEvents(t.id, false) + app.sofa.teamEvents(t.id, true) }.getOrDefault(emptyList()) } }
-                    .awaitAll().flatten().distinctBy { it.id }
+                teams.map { t -> async { app.repo.teamEvents(t.key) } }
+                    .awaitAll().flatten().distinctBy { it.key }
             }
-            val items = WidgetData.pick(evs, teams.map { it.id }.toSet())
+            val items = WidgetData.pick(evs, teams.map { it.key }.toSet())
             WidgetData.save(applicationContext, items)
             ScoresWidget.update(applicationContext)
             if (items.any { it.live }) scheduleSoon(applicationContext)

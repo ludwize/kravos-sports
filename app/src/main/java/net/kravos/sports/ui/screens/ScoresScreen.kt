@@ -88,7 +88,6 @@ fun ScoresScreen(pad: PaddingValues) {
     val day = LocalDate.parse(date)
     val expanded = remember(sport, date) { mutableStateMapOf<String, Boolean>() }
 
-    val counts = rememberLoad("counts", refreshMs = { 60_000L }) { app.sofa.liveCounts() }
 
     val load = rememberLoad(sport, date, liveOnly, refreshMs = { evs ->
         when {
@@ -98,24 +97,24 @@ fun ScoresScreen(pad: PaddingValues) {
             else -> 0L
         }
     }) {
-        if (liveOnly) app.sofa.live(sport)
-        else app.sofa.scheduled(sport, day, false).filter { Fmt.localDate(it.start) == day }
+        if (liveOnly) app.repo.live(sport)
+        else app.repo.day(sport, day).filter { it.race != null || Fmt.localDate(it.start) == day }
     }
 
     // --- build flat rows ---
-    val favTeamIds = favTeams.map { it.id }.toSet()
-    val favLeagueIds = favLeagues.map { it.utId }.toSet()
+    val favTeamIds = favTeams.map { it.key }.toSet()
+    val favLeagueIds = favLeagues.map { it.key }.toSet()
     val rows = remember(load.data, favTeamIds, favLeagueIds, expanded.toMap()) {
         val evs = load.data.orEmpty().sortedWith(compareBy<Event> { !it.status.live }.thenBy { it.start })
         val out = mutableListOf<Row_>()
-        val mine = evs.filter { it.home.id in favTeamIds || it.away.id in favTeamIds }
+        val mine = evs.filter { it.home.key in favTeamIds || it.away.key in favTeamIds }
         if (mine.isNotEmpty()) {
             out += Row_.Header(null, "fav", mine.size, mine.count { it.status.live }, false, fav = true)
             mine.forEachIndexed { i, e -> out += Row_.Match(e, false, i == mine.lastIndex, fav = true) }
         }
-        val groups = evs.groupBy { it.tournament?.key }.mapKeys { (_, v) -> v.first().tournament }
+        val groups = evs.groupBy { it.tournament?.groupKey }.mapKeys { (_, v) -> v.first().tournament }
         Ranking.sortGroups(groups, favLeagueIds).forEach { (t, list) ->
-            val key = t?.key ?: "none"
+            val key = t?.groupKey ?: "none"
             val tier = Ranking.tier(t, favLeagueIds)
             val anyLive = list.any { it.status.live }
             val collapsed = !(expanded[key] ?: (tier <= 5 || anyLive || liveOnly))
@@ -129,7 +128,7 @@ fun ScoresScreen(pad: PaddingValues) {
         // header
         Row(Modifier.fillMaxWidth().padding(start = 18.dp, end = 4.dp, top = 6.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(if (liveOnly) "Uživo" else Fmt.dayLabel(day), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-            val totalLive = counts.data?.get(sport.slug) ?: 0
+            val totalLive = if (liveOnly || day == LocalDate.now()) load.data.orEmpty().count { it.status.live } else 0
             Row(
                 Modifier.clip(RoundedCornerShape(50))
                     .background(if (liveOnly) K.Live else MaterialTheme.colorScheme.surfaceContainerHigh)
@@ -147,8 +146,7 @@ fun ScoresScreen(pad: PaddingValues) {
         val sportState = rememberLazyListState()
         LazyRow(state = sportState, contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)) {
             items(sports, key = { it.slug }) { s ->
-                val n = counts.data?.get(s.slug) ?: 0
-                Pill(s.label + if (n > 0) "  $n" else "", s == sport, onClick = {
+                Pill(s.label, s == sport, onClick = {
                     sport = s; app.prefs.lastSport = s
                 }, leading = { Icon(s.icon, null, Modifier.size(16.dp), tint = if (s == sport) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface) })
             }
@@ -169,17 +167,17 @@ fun ScoresScreen(pad: PaddingValues) {
                     itemsIndexed(rows, key = { i, r ->
                         when (r) {
                             is Row_.Header -> "h-${r.key}"
-                            is Row_.Match -> "m-${r.e.id}-${if (r.fav) "f" else ""}"
+                            is Row_.Match -> "m-${r.e.key}-${if (r.fav) "f" else ""}"
                             is Row_.Title -> "t-$i"
                         }
                     }, contentType = { _, r -> r.javaClass.simpleName }) { _, r ->
                         when (r) {
                             is Row_.Header -> GroupHeader(r,
-                                onOpen = { r.t?.let { t -> t.utId?.let { nav.go(Route.League(it, t.name)) } } },
+                                onOpen = { r.t?.let { t -> t.key?.let { nav.go(Route.League(it, t.name)) } } },
                                 onToggle = { expanded[r.key] = r.collapsed })
                             is Row_.Match -> Box(Modifier.padding(horizontal = 12.dp).cardSegment(false, r.last)) {
                                 Column {
-                                    EventRow(r.e, onClick = { nav.go(Route.Match(r.e.id)) })
+                                    EventRow(r.e, onClick = { nav.go(Route.Match(r.e.key)) })
                                     if (!r.last) Divider(start = 64.dp)
                                 }
                             }
@@ -205,7 +203,7 @@ private fun GroupHeader(h: Row_.Header, onOpen: () -> Unit, onToggle: () -> Unit
     Column(Modifier.padding(top = 10.dp)) {
         Box(Modifier.padding(horizontal = 12.dp).cardSegment(true, h.collapsed)) {
             Row(
-                Modifier.fillMaxWidth().clickable(onClick = if (h.fav) onToggle else onOpen).padding(start = 14.dp, end = 2.dp, top = 4.dp, bottom = 4.dp),
+                Modifier.fillMaxWidth().clickable(onClick = if (h.fav || h.t?.key == null) onToggle else onOpen).padding(start = 14.dp, end = 2.dp, top = 4.dp, bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (h.fav) {

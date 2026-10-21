@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.StateFlow
 import org.json.JSONArray
 import org.json.JSONObject
 
-data class FavTeam(val id: Int, val name: String, val sport: String)
-data class FavLeague(val utId: Int, val name: String, val sport: String, val alpha2: String?)
+data class FavTeam(val key: String, val name: String, val sport: String, val logo: String?)
+data class FavLeague(val key: String, val name: String, val sport: String, val logo: String?)
 
 enum class ThemeMode { SYSTEM, DARK, LIGHT }
 
@@ -38,51 +38,51 @@ class Prefs(context: Context) {
 
     fun setTheme(m: ThemeMode) { sp.edit().putString("theme", m.name).apply(); _theme.value = m }
 
-    fun isFavTeam(id: Int) = _teams.value.any { it.id == id }
-    fun toggleTeam(t: Team, sport: String) {
+    fun isFavTeam(key: String) = _teams.value.any { it.key == key }
+    fun toggleTeam(t: Team) {
         val cur = _teams.value
-        _teams.value = if (cur.any { it.id == t.id }) cur.filterNot { it.id == t.id } else cur + FavTeam(t.id, t.name, sport)
+        _teams.value = if (cur.any { it.key == t.key }) cur.filterNot { it.key == t.key } else cur + FavTeam(t.key, t.name, t.sport ?: "football", t.logo)
         saveTeams()
     }
 
-    fun isFavLeague(utId: Int?) = utId != null && _leagues.value.any { it.utId == utId }
-    fun toggleLeague(utId: Int, name: String, sport: String, alpha2: String?) {
+    fun isFavLeague(key: String?) = key != null && _leagues.value.any { it.key == key }
+    fun toggleLeague(key: String, name: String, sport: String, logo: String?) {
         val cur = _leagues.value
-        _leagues.value = if (cur.any { it.utId == utId }) cur.filterNot { it.utId == utId } else cur + FavLeague(utId, name, sport, alpha2)
+        _leagues.value = if (cur.any { it.key == key }) cur.filterNot { it.key == key } else cur + FavLeague(key, name, sport, logo)
         saveLeagues()
     }
 
     fun setSports(list: List<Sport>) {
         _sports.value = list.ifEmpty { listOf(Sport.FOOTBALL) }
-        sp.edit().putString("sports", _sports.value.joinToString(",") { it.slug }).apply()
+        sp.edit().putString("sports2", _sports.value.joinToString(",") { it.slug }).apply()
     }
 
     private fun loadSports(): List<Sport> {
-        val s = sp.getString("sports", null) ?: return Sport.entries.toList()
+        val s = sp.getString("sports2", null) ?: return Sport.entries.toList()
         return s.split(',').mapNotNull { slug -> Sport.entries.firstOrNull { it.slug == slug } }.ifEmpty { Sport.entries.toList() }
     }
 
     private fun loadTeams(): List<FavTeam> = runCatching {
-        val a = JSONArray(sp.getString("favTeams", "[]"))
-        (0 until a.length()).map { a.getJSONObject(it) }.map { FavTeam(it.getInt("id"), it.getString("name"), it.optString("sport", "football")) }
+        val a = JSONArray(sp.getString("favTeams2", "[]"))
+        (0 until a.length()).map { a.getJSONObject(it) }.map { FavTeam(it.getString("key"), it.getString("name"), it.optString("sport", "football"), it.optString("logo").ifEmpty { null }) }
     }.getOrDefault(emptyList())
 
     private fun saveTeams() {
         val a = JSONArray()
-        _teams.value.forEach { a.put(JSONObject().put("id", it.id).put("name", it.name).put("sport", it.sport)) }
-        sp.edit().putString("favTeams", a.toString()).apply()
+        _teams.value.forEach { a.put(JSONObject().put("key", it.key).put("name", it.name).put("sport", it.sport).put("logo", it.logo ?: "")) }
+        sp.edit().putString("favTeams2", a.toString()).apply()
     }
 
     private fun loadLeagues(): List<FavLeague> = runCatching {
-        val a = JSONArray(sp.getString("favLeagues", "[]"))
+        val a = JSONArray(sp.getString("favLeagues2", "[]"))
         (0 until a.length()).map { a.getJSONObject(it) }.map {
-            FavLeague(it.getInt("utId"), it.getString("name"), it.optString("sport", "football"), it.optString("alpha2").ifEmpty { null })
+            FavLeague(it.getString("key"), it.getString("name"), it.optString("sport", "football"), it.optString("logo").ifEmpty { null })
         }
     }.getOrDefault(emptyList())
 
     private fun saveLeagues() {
         val a = JSONArray()
-        _leagues.value.forEach { a.put(JSONObject().put("utId", it.utId).put("name", it.name).put("sport", it.sport).put("alpha2", it.alpha2 ?: "")) }
-        sp.edit().putString("favLeagues", a.toString()).apply()
+        _leagues.value.forEach { a.put(JSONObject().put("key", it.key).put("name", it.name).put("sport", it.sport).put("logo", it.logo ?: "")) }
+        sp.edit().putString("favLeagues2", a.toString()).apply()
     }
 }

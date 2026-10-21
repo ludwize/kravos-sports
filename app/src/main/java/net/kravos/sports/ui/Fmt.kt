@@ -1,7 +1,6 @@
 package net.kravos.sports.ui
 
 import net.kravos.sports.data.Event
-import net.kravos.sports.data.Sport
 import net.kravos.sports.data.statusSr
 import java.time.Instant
 import java.time.LocalDate
@@ -35,20 +34,8 @@ object Fmt {
         }
     }
 
-    /** "67'", "45+2'", "Poluvreme", "3. četv." … for live games. */
-    fun liveClock(e: Event, nowMs: Long = System.currentTimeMillis()): String {
-        val sport = Sport.of(e.sport)
-        val desc = e.status.description
-        val t = e.time
-        if ((sport == Sport.FOOTBALL || sport == Sport.FUTSAL) && t?.periodStart != null && t.initial != null) {
-            val dl = desc.lowercase()
-            if (dl.contains("halftime") || dl.contains("pause") || dl.contains("awaiting") || dl.contains("penalties")) return statusSr(desc)
-            val elapsed = ((nowMs / 1000 - t.periodStart) / 60).toInt() + t.initial / 60 + 1
-            val max = (t.max ?: (t.initial + 45 * 60)) / 60
-            return if (elapsed > max) "$max+${elapsed - max}'" else "$elapsed'"
-        }
-        return statusSr(desc)
-    }
+    /** Live clock text for the score row ("67'", "3. četv.", "Poluvreme"). */
+    fun liveClock(e: Event): String = e.clock?.takeIf { it.isNotBlank() } ?: statusSr(e.status.description).ifBlank { "Uživo" }
 
     /** Short status text for the score row. */
     fun statusShort(e: Event): String = when {
@@ -56,6 +43,8 @@ object Fmt {
         e.status.finished -> when (e.status.description.lowercase()) {
             "aet" -> "Prod."
             "ap" -> "Pen."
+            "retired" -> "Predaja"
+            "walkover" -> "B.b."
             else -> "Kraj"
         }
         e.status.cancelled -> statusSr(e.status.description)

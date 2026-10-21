@@ -50,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import net.kravos.sports.data.Event
-import net.kravos.sports.data.Sofa
 import net.kravos.sports.data.Sport
 import net.kravos.sports.data.Team
 import net.kravos.sports.data.Tournament
@@ -90,13 +89,12 @@ fun NetImage(url: String?, size: Dp, fallback: String, modifier: Modifier = Modi
 
 @Composable
 fun TeamLogo(team: Team, size: Dp = 22.dp, modifier: Modifier = Modifier) =
-    NetImage(Sofa.teamLogo(team.id), size, team.code ?: team.shortName, modifier)
+    NetImage(team.logo, size, team.code ?: team.shortName, modifier)
 
 @Composable
 fun LeagueLogo(t: Tournament?, size: Dp = 20.dp) {
     when {
-        t?.utId != null -> NetImage(Sofa.leagueLogo(t.utId), size, t.name)
-        Sofa.flag(t?.alpha2) != null -> NetImage(Sofa.flag(t?.alpha2), size, t?.alpha2 ?: "")
+        t?.logo != null -> NetImage(t.logo, size, t.name)
         else -> Icon(Icons.Filled.Public, null, Modifier.size(size), tint = LocalPalette.current.dim)
     }
 }
@@ -197,7 +195,8 @@ fun TournamentHeader(t: Tournament?, fav: Boolean, onClick: (() -> Unit)?, onSta
 // ---------- the score row ----------
 
 @Composable
-fun EventRow(e: Event, onClick: () -> Unit, showDate: Boolean = false, highlightTeam: Int? = null) {
+fun EventRow(e: Event, onClick: () -> Unit, showDate: Boolean = false, highlightTeam: String? = null) {
+    if (e.race != null) { RaceRow(e, onClick, showDate); return }
     val pal = LocalPalette.current
     val sport = Sport.of(e.sport)
     val live = e.status.live
@@ -226,8 +225,8 @@ fun EventRow(e: Event, onClick: () -> Unit, showDate: Boolean = false, highlight
         }
         // teams
         Column(Modifier.weight(1f).padding(start = 4.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            TeamLine(e.home, e.winner == 1, fin, e.homeRed, sport, e.firstToServe == 1 && live, highlightTeam == e.home.id)
-            TeamLine(e.away, e.winner == 2, fin, e.awayRed, sport, e.firstToServe == 2 && live, highlightTeam == e.away.id)
+            TeamLine(e.home, e.winner == 1, fin, e.homeRed, sport, e.serving == 1 && live, highlightTeam == e.home.key)
+            TeamLine(e.away, e.winner == 2, fin, e.awayRed, sport, e.serving == 2 && live, highlightTeam == e.away.key)
         }
         // periods (set-based sports)
         if (sport.setBased && (live || fin)) {
@@ -253,6 +252,28 @@ fun EventRow(e: Event, onClick: () -> Unit, showDate: Boolean = false, highlight
                 ScoreCell(e.homeScore.display ?: e.homeScore.current, live, fin && e.winner == 2)
                 ScoreCell(e.awayScore.display ?: e.awayScore.current, live, fin && e.winner == 1)
             }
+        }
+    }
+}
+
+@Composable
+private fun RaceRow(e: Event, onClick: () -> Unit, showDate: Boolean) {
+    val pal = LocalPalette.current
+    Row(
+        Modifier.fillMaxWidth().clickable(onClick = onClick).padding(start = 10.dp, end = 14.dp, top = 10.dp, bottom = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.width(54.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            if (showDate) Text(Fmt.date(e.start), fontSize = 11.sp, color = pal.dim)
+            if (e.status.live) Row(verticalAlignment = Alignment.CenterVertically) { LiveDot(6.dp); Spacer(Modifier.width(3.dp)); Text("Uživo", color = K.Live, fontSize = 12.sp) }
+            else Text(Fmt.statusShort(e), fontSize = 12.sp, color = pal.dim)
+        }
+        Column(Modifier.weight(1f).padding(start = 4.dp)) {
+            Text(e.home.name, fontSize = 14.5.sp, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            val top = e.race.orEmpty().filter { it.pos in 1..3 }
+            if ((e.status.finished || e.status.live) && top.isNotEmpty()) {
+                Text(top.joinToString("   ") { "${it.pos}. ${it.name.substringAfterLast(' ')}" }, fontSize = 12.5.sp, color = pal.dim, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            } else if (e.away.name.isNotBlank()) Text(e.away.name, fontSize = 12.5.sp, color = pal.dim, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }

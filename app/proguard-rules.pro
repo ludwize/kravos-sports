@@ -1,6 +1,5 @@
 -keep class net.kravos.sports.widget.** { *; }
 -keep class net.kravos.sports.work.** { *; }
--keepclassmembers class net.kravos.sports.data.WebBridge$JsBridge { @android.webkit.JavascriptInterface <methods>; }
 -keepattributes JavascriptInterface
 -dontwarn org.checkerframework.**
 -dontwarn com.google.errorprone.annotations.**

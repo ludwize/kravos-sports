@@ -21,14 +21,8 @@ object Http {
 
     @Volatile private var client: OkHttpClient? = null
 
-    /** SofaScore rejects API calls without this header ("challenge"); the site uses a short random hex token. */
-    @Volatile var xrw: String = "a1b2c3"
-        private set
-
     fun init(context: Context) {
         if (client != null) return
-        val sp = context.getSharedPreferences("transport", Context.MODE_PRIVATE)
-        xrw = sp.getString("xrw", null) ?: (1..6).map { "0123456789abcdef".random() }.joinToString("").also { sp.edit().putString("xrw", it).apply() }
         client = OkHttpClient.Builder()
             .cache(Cache(File(context.cacheDir, "http"), 60L * 1024 * 1024))
             .connectionPool(ConnectionPool(8, 5, TimeUnit.MINUTES))
@@ -37,18 +31,7 @@ object Http {
             .addInterceptor { chain ->
                 val r = chain.request()
                 val b = r.newBuilder().header("User-Agent", BROWSER_UA)
-                val host = r.url.host
-                if (host.contains("sofascore")) {
-                    // share cookies the bridge WebView earned (challenge pass) with direct requests, e.g. images
-                    runCatching { android.webkit.CookieManager.getInstance().getCookie("https://www.sofascore.com") }
-                        .getOrNull()?.takeIf { it.isNotBlank() }?.let { b.header("Cookie", it) }
-                    b.header("Referer", "https://www.sofascore.com/")
-                    b.header("Origin", "https://www.sofascore.com")
-                    b.header("Accept", "*/*")
-                    b.header("Accept-Language", "en-US,en;q=0.9")
-                    if (r.url.encodedPath.startsWith("/api/")) b.header("X-Requested-With", xrw)
-                    b.header("Cache-Control", "no-cache")
-                }
+                if (r.header("Accept") == null) b.header("Accept", "application/json, */*")
                 chain.proceed(b.build())
             }
             .build()

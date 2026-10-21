@@ -16,10 +16,10 @@ import net.kravos.sports.App
 enum class Tab(val label: String) { SCORES("Rezultati"), FAVORITES("Omiljeno"), LEAGUES("Lige"), SEARCH("Pretraga") }
 
 sealed class Route {
-    data class Match(val id: Int) : Route()
-    data class League(val utId: Int, val name: String, val seasonId: Int? = null) : Route()
-    data class TeamPage(val id: Int, val name: String) : Route()
-    data class PlayerPage(val id: Int, val name: String) : Route()
+    data class Match(val key: String) : Route()
+    data class League(val key: String, val name: String, val season: String? = null) : Route()
+    data class TeamPage(val key: String, val name: String) : Route()
+    data class PlayerPage(val key: String, val name: String) : Route()
     data object Settings : Route()
 }
 

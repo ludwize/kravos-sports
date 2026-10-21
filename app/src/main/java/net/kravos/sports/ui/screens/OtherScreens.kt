@@ -58,10 +58,9 @@ import kotlinx.coroutines.launch
 import net.kravos.sports.BuildConfig
 import net.kravos.sports.data.Event
 import net.kravos.sports.data.SearchHit
-import net.kravos.sports.data.Sofa
 import net.kravos.sports.data.Sport
+import net.kravos.sports.data.Team
 import net.kravos.sports.data.ThemeMode
-import net.kravos.sports.data.Tournament
 import net.kravos.sports.ui.Fmt
 import net.kravos.sports.ui.LocalApp
 import net.kravos.sports.ui.LocalNav
@@ -71,6 +70,7 @@ import net.kravos.sports.ui.components.Divider
 import net.kravos.sports.ui.components.Empty
 import net.kravos.sports.ui.components.ErrorBox
 import net.kravos.sports.ui.components.EventRow
+import net.kravos.sports.ui.components.FormBadge
 import net.kravos.sports.ui.components.KCard
 import net.kravos.sports.ui.components.LeagueLogo
 import net.kravos.sports.ui.components.Loading
@@ -104,6 +104,14 @@ private fun LargeTitle(text: String, trailing: @Composable () -> Unit = {}) =
         trailing()
     }
 
+@Composable
+private fun InfoRows(rows: List<net.kravos.sports.data.InfoLine>) = rows.forEach { (k, v) ->
+    Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 5.dp)) {
+        Text(k, Modifier.width(100.dp), fontSize = 13.sp, color = LocalPalette.current.dim)
+        Text(v, fontSize = 13.sp)
+    }
+}
+
 // ======================= TEAM =======================
 
 @Composable
@@ -111,47 +119,56 @@ fun TeamScreen(r: Route.TeamPage, pad: PaddingValues) {
     val app = LocalApp.current
     val nav = LocalNav.current
     val favs by app.prefs.teams.collectAsState()
-    val team = rememberLoad(r.id, "team") { app.sofa.team(r.id) }
-    val next = rememberLoad(r.id, "next", refreshMs = { l -> if (l.orEmpty().any { it.status.live }) 20_000L else 0L }) { app.sofa.teamEvents(r.id, true) }
-    val last = rememberLoad(r.id, "last") { app.sofa.teamEvents(r.id, false) }
-    val seasons = rememberLoad(r.id, "ts") { app.sofa.teamStandingsSeasons(r.id) }
-    var tab by rememberSaveable(r.id) { mutableStateOf(0) }
-    val t = team.data
+    val load = rememberLoad(r.key, refreshMs = { p -> if (p?.upcoming?.any { it.status.live } == true) 30_000L else 0L }) { app.repo.team(r.key) }
+    val pg = load.data
+    var tab by rememberSaveable(r.key) { mutableStateOf(0) }
 
     Column(Modifier.fillMaxSize().padding(top = pad.calculateTopPadding())) {
-        TopBar(t?.name ?: r.name, t?.country, logo = { NetImage(Sofa.teamLogo(r.id), 32.dp, r.name) }) {
-            StarButton(favs.any { it.id == r.id }) { t?.let { app.prefs.toggleTeam(it, it.sport ?: "football") } }
+        TopBar(pg?.team?.name ?: r.name, pg?.team?.country, logo = { NetImage(pg?.team?.logo, 32.dp, r.name) }) {
+            StarButton(favs.any { it.key == r.key }) { pg?.team?.let { app.prefs.toggleTeam(it) } }
         }
         Row(Modifier.padding(horizontal = 10.dp, vertical = 6.dp)) {
-            listOf("Utakmice", "Tabela").forEachIndexed { i, s -> Pill(s, tab == i, { tab = i }) }
+            listOf("Utakmice", "Tabela", "Info").forEachIndexed { i, s -> Pill(s, tab == i, { tab = i }) }
         }
+        when {
+            pg == null && load.value.loading -> { Loading(); return@Column }
+            pg == null -> { ErrorBox(load.value.error) { load.reload() }; return@Column }
+        }
+        pg!!
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = pad.calculateBottomPadding() + 24.dp)) {
-            if (tab == 0) {
-                val upcoming = next.data.orEmpty().sortedBy { it.start }.take(6)
-                val past = last.data.orEmpty().filter { !it.status.notStarted }.sortedByDescending { it.start }.take(15)
-                if (next.data == null && last.data == null) item { Loading() }
-                if (upcoming.isNotEmpty()) item { EventsCard("Sledeće", upcoming, r.id) }
-                if (past.isNotEmpty()) item {
-                    Column {
-                        FormStrip(past.take(10), r.id)
-                        EventsCard("Poslednje", past, r.id)
+            when (tab) {
+                0 -> {
+                    val upcoming = pg.upcoming.take(8)
+                    val past = pg.past.take(20)
+                    if (upcoming.isEmpty() && past.isEmpty()) item { Empty("Nema utakmica") }
+                    if (upcoming.isNotEmpty()) item { EventsCard("Sledeće", upcoming, r.key) }
+                    if (past.isNotEmpty()) item {
+                        Column {
+                            FormStrip(past.take(10), r.key)
+                            EventsCard("Poslednje", past, r.key)
+                        }
                     }
                 }
-            } else {
-                val list = seasons.data.orEmpty()
-                if (seasons.data == null) item { Loading() }
-                else if (list.isEmpty()) item { Empty("Nema tabele za ovaj tim") }
-                list.filter { it.first.utId != null }.take(3).forEach { (tour, s) ->
-                    item {
-                        Column {
-                            Row(Modifier.fillMaxWidth().clickable { nav.go(Route.League(tour.utId!!, tour.name, s.id)) }.padding(horizontal = 18.dp, vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically) {
-                                LeagueLogo(tour, 18.dp); Spacer(Modifier.width(8.dp))
-                                Text(tour.name, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
-                                Icon(Icons.Filled.ChevronRight, null, tint = LocalPalette.current.dim)
+                1 -> {
+                    if (pg.tables.isEmpty()) item { Empty("Nema tabele za ovaj tim") }
+                    pg.tables.forEach { (lk, table) ->
+                        item {
+                            Column {
+                                Row(Modifier.fillMaxWidth().clickable { nav.go(Route.League(lk, table.name)) }.padding(horizontal = 18.dp, vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically) {
+                                    Text(table.name, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
+                                    Icon(Icons.Filled.ChevronRight, null, tint = LocalPalette.current.dim)
+                                }
+                                TablesView(listOf(table.copy(name = "")), setOf(r.key))
                             }
-                            StandingsBlock(tour.utId!!, s.id, setOf(r.id))
                         }
+                    }
+                }
+                else -> item {
+                    KCard {
+                        CardTitle("O klubu")
+                        InfoRows(listOfNotNull(pg.team.country?.let { net.kravos.sports.data.InfoLine("Država", it) }) + pg.info)
+                        Spacer(Modifier.height(10.dp))
                     }
                 }
             }
@@ -160,19 +177,19 @@ fun TeamScreen(r: Route.TeamPage, pad: PaddingValues) {
 }
 
 @Composable
-private fun FormStrip(past: List<Event>, teamId: Int) {
+private fun FormStrip(past: List<Event>, teamKey: String) {
     Row(Modifier.padding(horizontal = 16.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
         Text("Forma ", fontSize = 12.sp, color = LocalPalette.current.dim)
         past.filter { it.status.finished }.take(10).reversed().forEach { e ->
-            val home = e.home.id == teamId
+            val home = e.home.key == teamKey
             val r = when (e.winner) { 3 -> "D"; 1 -> if (home) "W" else "L"; 2 -> if (home) "L" else "W"; else -> "?" }
-            net.kravos.sports.ui.components.FormBadge(r)
+            FormBadge(r)
         }
     }
 }
 
 @Composable
-private fun EventsCard(title: String, list: List<Event>, highlight: Int? = null) {
+private fun EventsCard(title: String, list: List<Event>, highlight: String? = null) {
     val nav = LocalNav.current
     KCard {
         CardTitle(title)
@@ -180,9 +197,9 @@ private fun EventsCard(title: String, list: List<Event>, highlight: Int? = null)
             Column {
                 Row(Modifier.padding(start = 14.dp, top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                     LeagueLogo(e.tournament, 12.dp); Spacer(Modifier.width(6.dp))
-                    Text(e.tournament?.name ?: "", fontSize = 11.sp, color = LocalPalette.current.dim, maxLines = 1)
+                    Text(listOfNotNull(e.tournament?.name, e.note).joinToString("   "), fontSize = 11.sp, color = LocalPalette.current.dim, maxLines = 1)
                 }
-                EventRow(e, { nav.go(Route.Match(e.id)) }, showDate = true, highlightTeam = highlight)
+                EventRow(e, { nav.go(Route.Match(e.key)) }, showDate = true, highlightTeam = highlight)
             }
             if (i < list.lastIndex) Divider(64.dp)
         }
@@ -195,54 +212,50 @@ private fun EventsCard(title: String, list: List<Event>, highlight: Int? = null)
 fun PlayerScreen(r: Route.PlayerPage, pad: PaddingValues) {
     val app = LocalApp.current
     val nav = LocalNav.current
-    val p = rememberLoad(r.id, "p") { app.sofa.player(r.id) }
-    val evs = rememberLoad(r.id, "pe") { app.sofa.playerEvents(r.id) }
-    val pl = p.data
+    val load = rememberLoad(r.key) { app.repo.player(r.key) }
+    val pl = load.data
     Column(Modifier.fillMaxSize().padding(top = pad.calculateTopPadding())) {
         TopBar(pl?.name ?: r.name, pl?.team?.name)
+        when {
+            pl == null && load.value.loading -> { Loading(); return@Column }
+            pl == null -> { ErrorBox(load.value.error) { load.reload() }; return@Column }
+        }
+        pl!!
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = pad.calculateBottomPadding() + 24.dp)) {
             item {
                 KCard {
                     Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                        NetImage(Sofa.playerPhoto(r.id), 72.dp, r.name, circle = true)
+                        NetImage(pl.photo, 72.dp, pl.name, circle = true)
                         Spacer(Modifier.width(14.dp))
                         Column(Modifier.weight(1f)) {
-                            Text(pl?.name ?: r.name, style = MaterialTheme.typography.titleMedium)
-                            pl?.team?.let { t ->
-                                Row(Modifier.clickable { nav.go(Route.TeamPage(t.id, t.name)) }.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Text(pl.name, style = MaterialTheme.typography.titleMedium)
+                            pl.team?.let { t ->
+                                Row(Modifier.clickable { nav.go(Route.TeamPage(t.key, t.name)) }.padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
                                     TeamLogo(t, 16.dp); Spacer(Modifier.width(6.dp)); Text(t.name, fontSize = 13.sp)
                                 }
                             }
                         }
                     }
-                    if (pl != null) {
-                        val facts = listOfNotNull(
-                            pl.country?.let { "Država" to it },
-                            pl.birth?.let { "Godine" to "${Fmt.age(it)} (${Fmt.fullDate(it)})" },
-                            pl.height?.let { "Visina" to "$it cm" },
-                            pl.position?.let { "Pozicija" to posSr(it) },
-                            pl.number?.let { "Broj" to it },
-                            pl.foot?.let { "Noga" to footSr(it) },
-                            pl.marketValue?.let { "Vrednost" to Fmt.money(it, pl.currency) },
-                        )
-                        facts.forEach { (k, v) ->
-                            Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 5.dp)) {
-                                Text(k, Modifier.width(100.dp), fontSize = 13.sp, color = LocalPalette.current.dim)
-                                Text(v, fontSize = 13.sp)
-                            }
-                        }
-                        Spacer(Modifier.height(10.dp))
-                    }
+                    InfoRows(pl.info)
+                    Spacer(Modifier.height(10.dp))
                 }
             }
-            val list = evs.data.orEmpty().sortedByDescending { it.start }.take(15)
-            if (list.isNotEmpty()) item { EventsCard("Poslednje utakmice", list, pl?.team?.id) }
+            if (pl.seasonStats.isNotEmpty()) item {
+                KCard {
+                    CardTitle(pl.seasonStats.first().second)
+                    pl.seasonStats.drop(1).forEach { (k, v) ->
+                        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 6.dp)) {
+                            Text(k, Modifier.weight(1f), fontSize = 14.sp, color = LocalPalette.current.dim)
+                            Text(v, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
+                    Spacer(Modifier.height(8.dp))
+                }
+            }
+            if (pl.recent.isNotEmpty()) item { EventsCard("Poslednje utakmice", pl.recent, pl.team?.key) }
         }
     }
 }
-
-private fun posSr(p: String) = when (p) { "G" -> "Golman"; "D" -> "Odbrana"; "M" -> "Vezni red"; "F" -> "Napad"; else -> p }
-private fun footSr(f: String) = when (f.lowercase()) { "right" -> "Desna"; "left" -> "Leva"; "both" -> "Obe"; else -> f }
 
 // ======================= FAVORITES =======================
 
@@ -268,77 +281,63 @@ fun FavoritesScreen(pad: PaddingValues) {
             if (leagues.isNotEmpty()) item {
                 Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 10.dp, vertical = 4.dp)) {
                     leagues.forEach { l ->
-                        Pill(l.name, false, { nav.go(Route.League(l.utId, l.name)) }, leading = { NetImage(Sofa.leagueLogo(l.utId), 16.dp, l.name) })
+                        Pill(l.name, false, { nav.go(Route.League(l.key, l.name)) }, leading = { NetImage(l.logo, 16.dp, l.name) })
                     }
                 }
             }
-            items(teams, key = { it.id }) { ft -> FavTeamCard(ft.id, ft.name) }
+            items(teams, key = { it.key }) { ft -> FavTeamCard(ft.key, ft.name, ft.logo) }
         }
     }
 }
 
 @Composable
-private fun FavTeamCard(id: Int, name: String) {
+private fun FavTeamCard(key: String, name: String, logo: String?) {
     val app = LocalApp.current
     val nav = LocalNav.current
-    val next = rememberLoad(id, "fn", refreshMs = { l -> if (l.orEmpty().any { it.status.live }) 20_000L else 120_000L }) { app.sofa.teamEvents(id, true) }
-    val last = rememberLoad(id, "fl") { app.sofa.teamEvents(id, false) }
-    val liveOrNext = next.data.orEmpty().sortedBy { it.start }.firstOrNull()
-    val lastGame = last.data.orEmpty().filter { it.status.finished }.maxByOrNull { it.start }
+    val load = rememberLoad(key, "fav", refreshMs = { p -> if (p?.upcoming?.any { it.status.live } == true) 30_000L else 300_000L }) { app.repo.team(key) }
+    val pg = load.data
+    val next = pg?.upcoming?.firstOrNull()
+    val last = pg?.past?.firstOrNull()
     KCard {
-        Row(Modifier.fillMaxWidth().clickable { nav.go(Route.TeamPage(id, name)) }.padding(horizontal = 14.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
-            NetImage(Sofa.teamLogo(id), 26.dp, name)
+        Row(Modifier.fillMaxWidth().clickable { nav.go(Route.TeamPage(key, name)) }.padding(horizontal = 14.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+            NetImage(logo, 26.dp, name)
             Spacer(Modifier.width(10.dp))
             Text(name, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
             Icon(Icons.Filled.ChevronRight, null, tint = LocalPalette.current.dim)
         }
         Divider(0.dp)
-        if (next.data == null && last.data == null) Loading()
-        lastGame?.let { EventRow(it, { nav.go(Route.Match(it.id)) }, showDate = true, highlightTeam = id) }
-        if (lastGame != null && liveOrNext != null) Divider(64.dp)
-        liveOrNext?.let { EventRow(it, { nav.go(Route.Match(it.id)) }, showDate = true, highlightTeam = id) }
+        if (pg == null && load.value.loading) Loading()
+        last?.let { EventRow(it, { nav.go(Route.Match(it.key)) }, showDate = true, highlightTeam = key) }
+        if (last != null && next != null) Divider(64.dp)
+        next?.let { EventRow(it, { nav.go(Route.Match(it.key)) }, showDate = true, highlightTeam = key) }
     }
 }
 
 // ======================= LEAGUES BROWSER =======================
 
-private val POPULAR = mapOf(
-    Sport.FOOTBALL to listOf(7 to "UEFA Liga šampiona", 679 to "UEFA Liga Evrope", 17015 to "UEFA Liga konferencija", 210 to "Superliga Srbije",
-        17 to "Premijer liga", 8 to "La Liga", 23 to "Serija A", 35 to "Bundesliga", 34 to "Liga 1", 16 to "Svetsko prvenstvo", 1 to "Evropsko prvenstvo", 10783 to "Liga nacija"),
-    Sport.BASKETBALL to listOf(138 to "Evroliga", 141 to "Evrokup", 235 to "ABA liga", 132 to "NBA"),
-)
-
 @Composable
 fun LeaguesScreen(pad: PaddingValues) {
     val app = LocalApp.current
     val nav = LocalNav.current
-    val sports by app.prefs.sports.collectAsState()
     val favs by app.prefs.leagues.collectAsState()
-    var sport by rememberSaveable { mutableStateOf(sports.first()) }
-    val cats = rememberLoad(sport, "cats") { app.sofa.categories(sport) }
-    val open = remember(sport) { mutableStateMapOf<Int, Boolean>() }
+    val browsable = listOf(Sport.FOOTBALL, Sport.BASKETBALL)
+    var sport by rememberSaveable { mutableStateOf(Sport.FOOTBALL) }
+    val cats = rememberLoad(sport, "cats") { app.repo.catalog(sport) }
+    val open = remember(sport) { mutableStateMapOf<String, Boolean>() }
 
     Column(Modifier.fillMaxSize().padding(top = pad.calculateTopPadding())) {
         LargeTitle("Lige")
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 10.dp, vertical = 4.dp)) {
-            sports.forEach { s -> Pill(s.label, s == sport, { sport = s }, leading = {
+            browsable.forEach { s -> Pill(s.label, s == sport, { sport = s }, leading = {
                 Icon(s.icon, null, Modifier.size(16.dp), tint = if (s == sport) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface)
             }) }
         }
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = pad.calculateBottomPadding() + 24.dp)) {
-            val myLeagues = favs.filter { it.sport == sport.slug }
-            if (myLeagues.isNotEmpty()) item {
+            val mine = favs.filter { it.sport == sport.slug }
+            if (mine.isNotEmpty()) item {
                 KCard {
                     CardTitle("Moje lige")
-                    myLeagues.forEach { l -> LeagueLine(l.name, null, l.utId) { nav.go(Route.League(l.utId, l.name)) } }
-                }
-            }
-            POPULAR[sport]?.let { pop ->
-                item {
-                    KCard {
-                        CardTitle("Popularno")
-                        pop.forEach { (id, name) -> LeagueLine(name, null, id) { nav.go(Route.League(id, name)) } }
-                    }
+                    mine.forEach { l -> LeagueLine(l.name, l.logo) { nav.go(Route.League(l.key, l.name)) } }
                 }
             }
             val list = cats.data
@@ -346,16 +345,25 @@ fun LeaguesScreen(pad: PaddingValues) {
                 list == null && cats.value.loading -> item { Loading() }
                 list == null -> item { ErrorBox(cats.value.error) { cats.reload() } }
                 else -> {
-                    val sorted = list.sortedWith(compareBy<Pair<Int, String>> { catRank(it.second) }.thenBy { it.second })
-                    item { CardTitle("Sve zemlje i takmičenja") }
-                    items(sorted, key = { it.first }) { (cid, cname) ->
-                        Column {
-                            Row(Modifier.fillMaxWidth().clickable { open[cid] = !(open[cid] ?: false) }.padding(horizontal = 18.dp, vertical = 11.dp),
-                                verticalAlignment = Alignment.CenterVertically) {
-                                Text(cname, Modifier.weight(1f), fontSize = 15.sp)
-                                Icon(if (open[cid] == true) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore, null, tint = LocalPalette.current.dim)
+                    val (shownOpen, collapsible) = list.partition { it.name == "Popularno" || it.leagues.size <= 3 && list.size <= 3 }
+                    shownOpen.forEach { g ->
+                        item(key = "g-" + g.name) {
+                            KCard {
+                                CardTitle(g.name)
+                                g.leagues.forEach { l -> LeagueLine(l.name, l.logo) { nav.go(Route.League(l.key, l.name)) } }
                             }
-                            if (open[cid] == true) CategoryTournaments(cid)
+                        }
+                    }
+                    if (collapsible.isNotEmpty()) item { CardTitle("Sve zemlje i takmičenja") }
+                    items(collapsible, key = { "c-" + it.name }) { g ->
+                        Column {
+                            Row(Modifier.fillMaxWidth().clickable { open[g.name] = !(open[g.name] ?: false) }.padding(horizontal = 18.dp, vertical = 11.dp),
+                                verticalAlignment = Alignment.CenterVertically) {
+                                Text(g.name, Modifier.weight(1f), fontSize = 15.sp)
+                                Text("${g.leagues.size}", fontSize = 12.sp, color = LocalPalette.current.dim)
+                                Icon(if (open[g.name] == true) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore, null, tint = LocalPalette.current.dim)
+                            }
+                            if (open[g.name] == true) g.leagues.forEach { l -> LeagueLine(l.name, l.logo, indent = true) { nav.go(Route.League(l.key, l.name)) } }
                             Divider(18.dp)
                         }
                     }
@@ -365,30 +373,11 @@ fun LeaguesScreen(pad: PaddingValues) {
     }
 }
 
-private fun catRank(name: String): Int = when (name.lowercase()) {
-    "serbia" -> 0
-    "europe" -> 1
-    "world", "international" -> 2
-    "england", "spain", "italy", "germany", "france" -> 3
-    else -> 4
-}
-
 @Composable
-private fun CategoryTournaments(cid: Int) {
-    val app = LocalApp.current
-    val nav = LocalNav.current
-    val ts = rememberLoad(cid, "ct") { app.sofa.categoryTournaments(cid) }
-    val list = ts.data
-    if (list == null) { Loading(); return }
-    if (list.isEmpty()) { Text("Nema takmičenja", Modifier.padding(18.dp), color = LocalPalette.current.dim); return }
-    list.forEach { t: Tournament -> LeagueLine(t.name, t, t.utId ?: t.id, indent = true) { nav.go(Route.League(t.utId ?: t.id, t.name)) } }
-}
-
-@Composable
-private fun LeagueLine(name: String, t: Tournament?, utId: Int, indent: Boolean = false, onClick: () -> Unit) {
+private fun LeagueLine(name: String, logo: String?, indent: Boolean = false, onClick: () -> Unit) {
     Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(start = if (indent) 30.dp else 14.dp, end = 14.dp, top = 9.dp, bottom = 9.dp),
         verticalAlignment = Alignment.CenterVertically) {
-        if (t != null) LeagueLogo(t, 20.dp) else NetImage(Sofa.leagueLogo(utId), 20.dp, name)
+        NetImage(logo, 20.dp, name)
         Spacer(Modifier.width(12.dp))
         Text(name, Modifier.weight(1f), fontSize = 14.5.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
         Icon(Icons.Filled.ChevronRight, null, tint = LocalPalette.current.dim)
@@ -405,7 +394,7 @@ fun SearchScreen(pad: PaddingValues) {
     var q by rememberSaveable { mutableStateOf("") }
     var debounced by remember { mutableStateOf("") }
     LaunchedEffect(q) { delay(350); debounced = q.trim() }
-    val res = rememberLoad(debounced) { if (debounced.length < 2) emptyList() else app.sofa.search(debounced) }
+    val res = rememberLoad(debounced) { if (debounced.length < 2) emptyList() else app.repo.search(debounced) }
 
     Column(Modifier.fillMaxSize().padding(top = pad.calculateTopPadding())) {
         LargeTitle("Pretraga")
@@ -425,29 +414,28 @@ fun SearchScreen(pad: PaddingValues) {
             if (debounced.length >= 2 && !res.value.loading && hits.isEmpty() && res.value.error == null) item { Empty("Nema rezultata") }
             items(hits.size) { i ->
                 when (val h = hits[i]) {
-                    is SearchHit.TeamHit -> Row(Modifier.fillMaxWidth().clickable { nav.go(Route.TeamPage(h.team.id, h.team.name)) }.padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
+                    is SearchHit.TeamHit -> TeamHitRow(h.team, favs.any { it.key == h.team.key }, { nav.go(Route.TeamPage(h.team.key, h.team.name)) }) { app.prefs.toggleTeam(h.team) }
+                    is SearchHit.LeagueHit -> Row(Modifier.fillMaxWidth().clickable { nav.go(Route.League(h.key, h.name)) }.padding(horizontal = 16.dp, vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically) {
-                        TeamLogo(h.team, 30.dp); Spacer(Modifier.width(12.dp))
-                        Column(Modifier.weight(1f)) {
-                            Text(h.team.name, fontSize = 15.sp, maxLines = 1)
-                            Text(listOfNotNull(Sport.of(h.team.sport).label, h.team.country).joinToString(" · "), fontSize = 12.sp, color = LocalPalette.current.dim)
-                        }
-                        StarButton(favs.any { it.id == h.team.id }) { app.prefs.toggleTeam(h.team, h.team.sport ?: "football") }
-                    }
-                    is SearchHit.LeagueHit -> Row(Modifier.fillMaxWidth().clickable { nav.go(Route.League(h.id, h.name)) }.padding(horizontal = 16.dp, vertical = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically) {
-                        NetImage(Sofa.leagueLogo(h.id), 30.dp, h.name); Spacer(Modifier.width(12.dp))
+                        NetImage(h.logo, 30.dp, h.name); Spacer(Modifier.width(12.dp))
                         Column(Modifier.weight(1f)) {
                             Text(h.name, fontSize = 15.sp, maxLines = 1)
                             Text(listOfNotNull("Takmičenje", Sport.of(h.sport).label, h.category).joinToString(" · "), fontSize = 12.sp, color = LocalPalette.current.dim)
                         }
                     }
-                    is SearchHit.PlayerHit -> Row(Modifier.fillMaxWidth().clickable { nav.go(Route.PlayerPage(h.id, h.name)) }.padding(horizontal = 16.dp, vertical = 10.dp),
+                    is SearchHit.PlayerHit -> Row(Modifier.fillMaxWidth().clickable { nav.go(Route.PlayerPage(h.key, h.name)) }.padding(horizontal = 16.dp, vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically) {
-                        NetImage(Sofa.playerPhoto(h.id), 30.dp, h.name, circle = true); Spacer(Modifier.width(12.dp))
+                        NetImage(h.photo, 30.dp, h.name, circle = true); Spacer(Modifier.width(12.dp))
                         Column(Modifier.weight(1f)) {
                             Text(h.name, fontSize = 15.sp, maxLines = 1)
-                            Text(listOfNotNull("Igrač", h.team?.name).joinToString(" · "), fontSize = 12.sp, color = LocalPalette.current.dim)
+                            Text(listOfNotNull("Igrač", h.team).joinToString(" · "), fontSize = 12.sp, color = LocalPalette.current.dim)
+                        }
+                    }
+                    is SearchHit.MatchHit -> Row(Modifier.fillMaxWidth().clickable { nav.go(Route.Match(h.key)) }.padding(horizontal = 16.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Column(Modifier.weight(1f)) {
+                            Text(h.title, fontSize = 15.sp, maxLines = 1)
+                            Text("Utakmica · ${h.sub}", fontSize = 12.sp, color = LocalPalette.current.dim, maxLines = 1)
                         }
                     }
                 }
@@ -455,6 +443,17 @@ fun SearchScreen(pad: PaddingValues) {
         }
     }
 }
+
+@Composable
+private fun TeamHitRow(t: Team, fav: Boolean, onOpen: () -> Unit, onStar: () -> Unit) =
+    Row(Modifier.fillMaxWidth().clickable(onClick = onOpen).padding(start = 16.dp, top = 4.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        TeamLogo(t, 30.dp); Spacer(Modifier.width(12.dp))
+        Column(Modifier.weight(1f)) {
+            Text(t.name, fontSize = 15.sp, maxLines = 1)
+            Text(listOfNotNull(Sport.of(t.sport).label, t.country).joinToString(" · "), fontSize = 12.sp, color = LocalPalette.current.dim)
+        }
+        StarButton(fav, onStar)
+    }
 
 // ======================= SETTINGS =======================
 
@@ -548,9 +547,8 @@ fun SettingsScreen(pad: PaddingValues, release: Release?, onCheckUpdate: () -> U
                 KCard {
                     CardTitle("Podaci")
                     Text(
-                        "Izvor: SofaScore (nezvanični API, samo za ličnu upotrebu). Veza: " +
-                            (if (app.sofa.useBridge) "preko ugrađenog pregledača — ${app.sofa.bridgeStatus}" else "direktna") +
-                            (app.sofa.lastError?.let { "\nPoslednja greška: ${it.take(120)}" } ?: ""),
+                        "Fudbal: FotMob · Evroliga/Evrokup: zvanični API · ostala košarka, tenis, hokej, kriket: LiveScore · F1, UFC, NFL, MLB: ESPN.\nSamo za ličnu upotrebu." +
+                            (app.repo.lastError?.let { "\nPoslednja greška: ${it.take(140)}" } ?: ""),
                         fontSize = 12.sp, color = LocalPalette.current.dim, modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
                     )
                     Spacer(Modifier.height(10.dp))

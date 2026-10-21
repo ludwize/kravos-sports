@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val app = application as App
-        intent?.getIntExtra(EXTRA_MATCH, 0)?.takeIf { it > 0 }?.let { nav.go(Route.Match(it)) }
+        intent?.getStringExtra(EXTRA_MATCH)?.let { nav.go(Route.Match(it)) }
         setContent {
             val theme by app.prefs.theme.collectAsState()
             SportsTheme(theme) {
@@ -79,7 +79,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: android.content.Intent) {
         super.onNewIntent(intent)
-        intent.getIntExtra(EXTRA_MATCH, 0).takeIf { it > 0 }?.let { nav.go(Route.Match(it)) }
+        intent.getStringExtra(EXTRA_MATCH)?.let { nav.go(Route.Match(it)) }
     }
 
     override fun onStop() {
@@ -146,7 +146,7 @@ private fun Root(app: App) {
                 AnimatedContent(targetState = top ?: nav.tab.value, transitionSpec = { fadeIn() togetherWith fadeOut() }, label = "nav") { dest ->
                     holder.SaveableStateProvider(if (dest is Tab) "tab-${dest.name}" else "r-${nav.stack.size}-$dest") {
                     when (dest) {
-                        is Route.Match -> MatchScreen(dest.id, p)
+                        is Route.Match -> MatchScreen(dest.key, p)
                         is Route.League -> LeagueScreen(dest, p)
                         is Route.TeamPage -> TeamScreen(dest, p)
                         is Route.PlayerPage -> PlayerScreen(dest, p)

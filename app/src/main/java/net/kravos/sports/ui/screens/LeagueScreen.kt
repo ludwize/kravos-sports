@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -43,10 +45,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.kravos.sports.data.Event
-import net.kravos.sports.data.Season
-import net.kravos.sports.data.Sofa
+import net.kravos.sports.data.LeaguePage
 import net.kravos.sports.data.StandingTable
-import net.kravos.sports.data.TOP_STAT_SR
 import net.kravos.sports.ui.LocalApp
 import net.kravos.sports.ui.LocalNav
 import net.kravos.sports.ui.Route
@@ -72,112 +72,106 @@ fun LeagueScreen(r: Route.League, pad: PaddingValues) {
     val app = LocalApp.current
     val nav = LocalNav.current
     val favs by app.prefs.leagues.collectAsState()
-    val info = rememberLoad(r.utId, "ut") { app.sofa.uniqueTournament(r.utId) }
-    val seasons = rememberLoad(r.utId, "seasons") { app.sofa.seasons(r.utId) }
-    var seasonId by rememberSaveable(r.utId) { mutableStateOf(r.seasonId) }
-    val sid = seasonId ?: seasons.data?.firstOrNull()?.id
-    var tab by rememberSaveable(r.utId) { mutableStateOf(LTab.TABLE.name) }
+    var season by rememberSaveable(r.key) { mutableStateOf(r.season) }
+    val load = rememberLoad(r.key, season) { app.repo.league(r.key, season) }
+    val pg = load.data
+    var tab by rememberSaveable(r.key) { mutableStateOf(LTab.TABLE.name) }
 
     Column(Modifier.fillMaxSize().padding(top = pad.calculateTopPadding())) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = { nav.back() }) { Icon(Icons.AutoMirrored.Filled.ArrowBack, "Nazad") }
-            NetImage(Sofa.leagueLogo(r.utId), 30.dp, r.name)
+            NetImage(pg?.logo, 30.dp, r.name)
             Spacer(Modifier.width(10.dp))
             Column(Modifier.weight(1f)) {
-                Text(info.data?.name ?: r.name, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                info.data?.categoryName?.let { Text(it, fontSize = 12.sp, color = LocalPalette.current.dim) }
+                Text(pg?.name ?: r.name, style = MaterialTheme.typography.titleMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                pg?.country?.let { Text(it, fontSize = 12.sp, color = LocalPalette.current.dim) }
             }
-            StarButton(favs.any { it.utId == r.utId }) {
-                app.prefs.toggleLeague(r.utId, info.data?.name ?: r.name, info.data?.sport ?: "football", info.data?.alpha2)
+            StarButton(favs.any { it.key == r.key }) {
+                app.prefs.toggleLeague(r.key, pg?.name ?: r.name, pg?.sport ?: "football", pg?.logo)
             }
         }
-        Row(Modifier.padding(horizontal = 10.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            SeasonPicker(seasons.data.orEmpty(), sid) { seasonId = it }
+        if (pg != null && pg.seasons.size > 1) Row(Modifier.padding(horizontal = 10.dp)) {
+            SeasonPicker(pg.seasons, pg.season) { season = it }
         }
+        val tabs = LTab.entries.filter { it != LTab.PLAYERS || pg?.top?.isNotEmpty() == true }
         Row(Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 10.dp, vertical = 6.dp)) {
-            LTab.entries.forEach { t -> Pill(t.label, t.name == tab, { tab = t.name }) }
+            tabs.forEach { t -> Pill(t.label, t.name == tab, { tab = t.name }) }
         }
-        if (sid == null) {
-            if (seasons.value.loading) Loading() else ErrorBox(seasons.value.error) { seasons.reload() }
-            return@Column
+        when {
+            pg == null && load.value.loading -> { Loading(); return@Column }
+            pg == null -> { ErrorBox(load.value.error) { load.reload() }; return@Column }
         }
+        pg!!
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = pad.calculateBottomPadding() + 24.dp)) {
             when (LTab.valueOf(tab)) {
-                LTab.TABLE -> item { Column { StandingsBlock(r.utId, sid, emptySet()) } }
-                LTab.RESULTS -> item { Column { EventsBlock(r.utId, sid, next = false) } }
-                LTab.FIXTURES -> item { Column { EventsBlock(r.utId, sid, next = true) } }
-                LTab.PLAYERS -> item { Column { TopPlayersBlock(r.utId, sid) } }
+                LTab.TABLE -> item { Column { TablesView(pg.tables, emptySet()) } }
+                LTab.RESULTS -> item { Column { EventsByRound(pg.results, "Nema odigranih utakmica") } }
+                LTab.FIXTURES -> item { Column { EventsByRound(pg.fixtures, "Nema zakazanih utakmica") } }
+                LTab.PLAYERS -> item { Column { TopPlayers(pg) } }
             }
         }
     }
 }
 
 @Composable
-private fun SeasonPicker(list: List<Season>, sel: Int?, onPick: (Int) -> Unit) {
+private fun SeasonPicker(list: List<String>, sel: String?, onPick: (String) -> Unit) {
     var open by remember { mutableStateOf(false) }
     Box {
         TextButton(onClick = { open = true }) {
-            Text("Sezona " + (list.firstOrNull { it.id == sel }?.year ?: list.firstOrNull { it.id == sel }?.name ?: ""))
+            Text("Sezona ${sel ?: list.firstOrNull() ?: ""}")
             Icon(Icons.Filled.ArrowDropDown, null)
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            list.take(15).forEach { s ->
-                DropdownMenuItem(text = { Text(s.year ?: s.name) }, onClick = { open = false; onPick(s.id) })
-            }
+            list.take(15).forEach { s -> DropdownMenuItem(text = { Text(s) }, onClick = { open = false; onPick(s) }) }
         }
     }
 }
 
-/** Standings for a league season; highlights [highlight] team ids. Used by league, team and match screens. */
+/** Standings for a league (by key); highlights [highlight] team keys. Used by match and team screens. */
 @Composable
-fun StandingsBlock(utId: Int, seasonId: Int, highlight: Set<Int>) {
+fun StandingsBlock(leagueKey: String, season: String?, highlight: Set<String>) {
     val app = LocalApp.current
-    val nav = LocalNav.current
-    val pal = LocalPalette.current
-    val st = rememberLoad(utId, seasonId, "standings") { app.sofa.standings(utId, seasonId) }
+    val st = rememberLoad(leagueKey, season, "standings") { app.repo.league(leagueKey, season).tables }
     when {
         st.data == null && st.value.loading -> Loading()
         st.data == null -> ErrorBox(st.value.error) { st.reload() }
-        st.data!!.isEmpty() -> Empty("Ovo takmičenje nema tabelu (kup / eliminacije)")
-        else -> st.data!!.forEach { table -> StandingTableCard(table, highlight, pal.dim) { id, name -> nav.go(Route.TeamPage(id, name)) } }
+        else -> TablesView(st.data!!, highlight)
     }
 }
 
-private val ZONE_COLORS = listOf(Color(0xFF1E88E5), Color(0xFF00A86B), Color(0xFF26C6DA), Color(0xFFF2A100), Color(0xFFE5484D), Color(0xFF9C6ADE))
+@Composable
+fun TablesView(tables: List<StandingTable>, highlight: Set<String>) {
+    val nav = LocalNav.current
+    if (tables.isEmpty()) { Empty("Ovo takmičenje nema tabelu (kup / eliminacije)"); return }
+    tables.forEach { t -> StandingTableCard(t, highlight) { key, name -> nav.go(Route.TeamPage(key, name)) } }
+}
 
 @Composable
-private fun StandingTableCard(t: StandingTable, highlight: Set<Int>, dim: Color, onTeam: (Int, String) -> Unit) {
-    val zones = t.rows.mapNotNull { it.promotion }.distinct()
-    val relegation = zones.filter { it.lowercase().let { z -> z.contains("relegation") || z.contains("ispadanje") } }
-    fun zoneColor(z: String?): Color? {
-        z ?: return null
-        if (z in relegation) return Color(0xFFE5484D)
-        val i = zones.filter { it !in relegation }.indexOf(z)
-        return ZONE_COLORS.getOrNull(i.coerceAtLeast(0)) ?: Color.Gray
-    }
+private fun StandingTableCard(t: StandingTable, highlight: Set<String>, onTeam: (String, String) -> Unit) {
+    val dim = LocalPalette.current.dim
     val hasDraws = t.rows.any { it.draws > 0 }
     val hasPoints = t.rows.any { it.points != null }
     KCard {
         if (t.name.isNotBlank()) CardTitle(t.name)
         Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp)) {
-            Text("#", Modifier.width(26.dp), fontSize = 11.sp, color = dim)
+            Text("#", Modifier.width(28.dp), fontSize = 11.sp, color = dim)
             Text("Tim", Modifier.weight(1f), fontSize = 11.sp, color = dim)
-            listOfNotNull("U", "P", if (hasDraws) "N" else null, "I", "Gol", if (hasPoints) "Bod" else "%").forEach {
-                Text(it, Modifier.width(if (it == "Gol") 50.dp else 28.dp), textAlign = TextAlign.Center, fontSize = 11.sp, color = dim)
+            listOfNotNull("U", "P", if (hasDraws) "N" else null, "I", if (hasPoints) "Gol" else "Koš", if (hasPoints) "Bod" else null).forEach {
+                Text(it, Modifier.width(if (it == "Gol" || it == "Koš") 58.dp else 26.dp), textAlign = TextAlign.Center, fontSize = 11.sp, color = dim)
             }
         }
         t.rows.forEach { row ->
-            val hl = row.team.id in highlight
+            val hl = row.team.key in highlight
             Row(
                 Modifier.fillMaxWidth()
                     .background(if (hl) MaterialTheme.colorScheme.primary.copy(alpha = 0.14f) else Color.Transparent)
-                    .clickable { onTeam(row.team.id, row.team.name) }
+                    .clickable(enabled = row.team.hasPage) { onTeam(row.team.key, row.team.name) }
                     .padding(horizontal = 12.dp, vertical = 7.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(Modifier.width(26.dp)) {
-                    val zc = zoneColor(row.promotion)
-                    if (zc != null) Box(Modifier.size(3.dp, 18.dp).clip(androidx.compose.foundation.shape.RoundedCornerShape(2.dp)).background(zc).align(Alignment.CenterStart))
+                Box(Modifier.width(28.dp)) {
+                    val zc = row.zoneColor?.let { c -> runCatching { Color(android.graphics.Color.parseColor(c)) }.getOrNull() }
+                    if (zc != null) Box(Modifier.size(3.dp, 18.dp).clip(RoundedCornerShape(2.dp)).background(zc).align(Alignment.CenterStart))
                     Text("${row.position}", Modifier.padding(start = 7.dp), fontSize = 13.sp, color = if (zc != null) MaterialTheme.colorScheme.onSurface else dim)
                 }
                 TeamLogo(row.team, 18.dp)
@@ -188,20 +182,17 @@ private fun StandingTableCard(t: StandingTable, highlight: Set<Int>, dim: Color,
                 Cell("${row.wins}")
                 if (hasDraws) Cell("${row.draws}")
                 Cell("${row.losses}")
-                Text("${row.scoresFor}:${row.scoresAgainst}", Modifier.width(50.dp), textAlign = TextAlign.Center, fontSize = 12.sp, color = dim)
-                Text(
-                    if (hasPoints) "${row.points ?: 0}" else row.percentage?.let { String.format(java.util.Locale.US, "%.3f", it).removePrefix("0") } ?: "-",
-                    Modifier.width(28.dp), textAlign = TextAlign.Center, fontSize = 13.sp, fontWeight = FontWeight.Bold,
-                )
+                Text("${row.scoresFor}:${row.scoresAgainst}", Modifier.width(58.dp), textAlign = TextAlign.Center, fontSize = 12.sp, color = dim)
+                if (hasPoints) Text("${row.points ?: 0}", Modifier.width(26.dp), textAlign = TextAlign.Center, fontSize = 13.sp, fontWeight = FontWeight.Bold)
             }
         }
-        if (zones.isNotEmpty()) {
+        if (t.legend.isNotEmpty()) {
             Column(Modifier.padding(horizontal = 14.dp, vertical = 10.dp)) {
-                zones.forEach { z ->
+                t.legend.forEach { (z, c) ->
                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 2.dp)) {
-                        Box(Modifier.size(8.dp).clip(androidx.compose.foundation.shape.CircleShape).background(zoneColor(z) ?: Color.Gray))
+                        Box(Modifier.size(8.dp).clip(CircleShape).background(runCatching { Color(android.graphics.Color.parseColor(c)) }.getOrDefault(Color.Gray)))
                         Spacer(Modifier.width(8.dp))
-                        Text(zoneSr(z), fontSize = 11.sp, color = dim)
+                        Text(z, fontSize = 11.sp, color = dim)
                     }
                 }
             }
@@ -210,82 +201,50 @@ private fun StandingTableCard(t: StandingTable, highlight: Set<Int>, dim: Color,
 }
 
 @Composable
-private fun Cell(s: String) = Text(s, Modifier.width(28.dp), textAlign = TextAlign.Center, fontSize = 13.sp)
-
-private fun zoneSr(z: String): String = z
-    .replace("Champions League", "Liga šampiona")
-    .replace("Europa League", "Liga Evrope")
-    .replace("Conference League", "Liga konferencija")
-    .replace("Relegation", "Ispadanje")
-    .replace("Promotion", "Plasman")
-    .replace("Playoffs", "Plej-of")
-    .replace("Play-offs", "Plej-of")
-    .replace("Qualification", "kvalifikacije")
-    .replace("qualification", "kvalifikacije")
+private fun Cell(s: String) = Text(s, Modifier.width(26.dp), textAlign = TextAlign.Center, fontSize = 13.sp)
 
 @Composable
-private fun EventsBlock(utId: Int, seasonId: Int, next: Boolean) {
-    val app = LocalApp.current
+private fun EventsByRound(evs: List<Event>, empty: String) {
     val nav = LocalNav.current
-    var pages by remember(utId, seasonId, next) { mutableStateOf(1) }
-    val load = rememberLoad(utId, seasonId, next, pages) {
-        (0 until pages).flatMap { app.sofa.tournamentEvents(utId, seasonId, next, it) }
-    }
-    val evs = load.data
-    when {
-        evs == null && load.value.loading -> Loading()
-        evs.isNullOrEmpty() -> Empty(if (next) "Nema zakazanih utakmica" else "Nema odigranih utakmica")
-        else -> {
-            val sorted = if (next) evs.sortedBy { it.start } else evs.sortedByDescending { it.start }
-            val byRound = sorted.groupBy { it.roundName ?: it.round?.let { r -> "$r. kolo" } ?: "" }
-            byRound.forEach { (round, list) ->
-                KCard {
-                    if (round.isNotBlank()) CardTitle(round)
-                    list.forEachIndexed { i, e: Event ->
-                        EventRow(e, { nav.go(Route.Match(e.id)) }, showDate = true)
-                        if (i < list.lastIndex) Divider(64.dp)
-                    }
-                }
+    var shown by remember(evs) { mutableStateOf(40) }
+    if (evs.isEmpty()) { Empty(empty); return }
+    val byRound = evs.take(shown).groupBy { it.roundName ?: "" }
+    byRound.forEach { (round, list) ->
+        KCard {
+            if (round.isNotBlank()) CardTitle(round)
+            list.forEachIndexed { i, e ->
+                EventRow(e, { nav.go(Route.Match(e.key)) }, showDate = true)
+                if (i < list.lastIndex) Divider(64.dp)
             }
-            TextButton(onClick = { pages++ }, modifier = Modifier.fillMaxWidth()) { Text("Učitaj još") }
         }
     }
+    if (evs.size > shown) TextButton(onClick = { shown += 40 }, modifier = Modifier.fillMaxWidth()) { Text("Prikaži još") }
 }
 
 @Composable
-private fun TopPlayersBlock(utId: Int, seasonId: Int) {
-    val app = LocalApp.current
+private fun TopPlayers(pg: LeaguePage) {
     val nav = LocalNav.current
-    val load = rememberLoad(utId, seasonId, "top") { app.sofa.topPlayers(utId, seasonId) }
-    val cats = load.data
-    when {
-        cats == null && load.value.loading -> Loading()
-        cats.isNullOrEmpty() -> Empty("Statistika igrača nije dostupna za ovo takmičenje")
-        else -> {
-            val preferred = listOf("rating", "goals", "assists", "goalsAssistsSum", "expectedGoals", "points", "rebounds", "pir", "bigChancesCreated",
-                "keyPasses", "successfulDribbles", "tackles", "interceptions", "saves", "cleanSheet", "yellowCards", "redCards")
-            val ordered = cats.sortedBy { c -> preferred.indexOf(c.key).let { if (it < 0) 999 else it } }
-            ordered.forEach { c ->
-                KCard {
-                    CardTitle(TOP_STAT_SR[c.key] ?: c.key)
-                    c.players.take(5).forEachIndexed { i, p ->
-                        Row(
-                            Modifier.fillMaxWidth().clickable { nav.go(Route.PlayerPage(p.playerId, p.name)) }.padding(horizontal = 14.dp, vertical = 7.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text("${i + 1}", Modifier.width(22.dp), fontSize = 13.sp, color = LocalPalette.current.dim)
-                            NetImage(Sofa.playerPhoto(p.playerId), 30.dp, p.name, circle = true)
-                            Spacer(Modifier.width(10.dp))
-                            Column(Modifier.weight(1f)) {
-                                Text(p.name, fontSize = 14.sp, maxLines = 1)
-                                p.team?.let { Text(it.shortName, fontSize = 11.sp, color = LocalPalette.current.dim, maxLines = 1) }
-                            }
-                            Text(p.value, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = if (i == 0) K.Accent else MaterialTheme.colorScheme.onSurface)
-                        }
+    if (pg.top.isEmpty()) { Empty("Statistika igrača nije dostupna"); return }
+    pg.top.forEach { c ->
+        KCard {
+            CardTitle(c.title)
+            c.players.forEachIndexed { i, p ->
+                Row(
+                    Modifier.fillMaxWidth().clickable(enabled = p.playerKey != null) { p.playerKey?.let { nav.go(Route.PlayerPage(it, p.name)) } }
+                        .padding(horizontal = 14.dp, vertical = 7.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text("${i + 1}", Modifier.width(22.dp), fontSize = 13.sp, color = LocalPalette.current.dim)
+                    NetImage(p.playerKey?.substringAfter(':')?.let { net.kravos.sports.data.FotMob.playerPhoto(it) }, 30.dp, p.name, circle = true)
+                    Spacer(Modifier.width(10.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(p.name, fontSize = 14.sp, maxLines = 1)
+                        p.team?.let { Text(it, fontSize = 11.sp, color = LocalPalette.current.dim, maxLines = 1) }
                     }
-                    Spacer(Modifier.height(6.dp))
+                    Text(p.value, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = if (i == 0) K.Accent else MaterialTheme.colorScheme.onSurface)
                 }
             }
+            Spacer(Modifier.height(6.dp))
         }
     }
 }
