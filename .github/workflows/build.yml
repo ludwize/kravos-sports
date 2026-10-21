@@ -97,7 +97,7 @@ jobs:
         run: |
           mkdir -p smoke
           for u in https://api.sofascore.com/api/v1/sport/football/events/live https://www.sofascore.com/api/v1/sport/football/events/live; do
-            code=$(curl -s -o /tmp/p.json -w '%{http_code}' -A 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/129 Mobile Safari/537.36' -H 'Referer: https://www.sofascore.com/' "$u")
+            code=$(curl -s -o /tmp/p.json -w '%{http_code}' -A 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/129 Mobile Safari/537.36' -H 'Referer: https://www.sofascore.com/' -H 'X-Requested-With: 3f9a1c' "$u")
             echo "$code $u $(head -c 200 /tmp/p.json)" >> smoke/probe.txt
           done
           cat smoke/probe.txt

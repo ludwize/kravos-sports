@@ -38,7 +38,7 @@ class WebBridge(private val appContext: Context) {
     @Volatile private var loadedAt = 0L
 
     /** API base the site itself uses (learned from its own requests). */
-    @Volatile var apiBase: String = "https://www.sofascore.com/api/v1/"
+    @Volatile var apiBase: String = "https://api.sofascore.com/api/v1/"
         private set
     /** Non-standard headers the site sends with API requests (e.g. anti-bot tokens). */
     private val siteHeaders = ConcurrentHashMap<String, String>()
@@ -117,16 +117,24 @@ class WebBridge(private val appContext: Context) {
     }
 
     private suspend fun jsFetch(url: String): Pair<Int, String> {
+        val first = jsFetchOnce(url, if (url.startsWith("https://www.")) "include" else "omit")
+        if (first.first != -1) return first
+        // network/CORS failure: retry the simplest possible request
+        return jsFetchOnce(url, "omit", extraHeaders = false)
+    }
+
+    private suspend fun jsFetchOnce(url: String, credentials: String, extraHeaders: Boolean = true): Pair<Int, String> {
         val id = ids.getAndIncrement()
         val d = CompletableDeferred<Pair<Int, String>>()
         pending[id] = d
         val hdr = JSONObject().apply {
             put("Accept", "*/*")
-            siteHeaders.forEach { (k, v) -> put(k, v) }
+            put("X-Requested-With", Http.xrw)
+            if (extraHeaders) siteHeaders.forEach { (k, v) -> if (k.lowercase() != "x-requested-with") put(k, v) }
         }
         val js = """
             (function(){
-              fetch(${JSONObject.quote(url)}, {credentials:'include', headers:$hdr})
+              fetch(${JSONObject.quote(url)}, {credentials:'$credentials', mode:'cors', headers:$hdr})
                 .then(function(r){ return r.text().then(function(t){ KS.onResult($id, r.status, t); }); })
                 .catch(function(e){ KS.onResult($id, -1, String(e)); });
             })();

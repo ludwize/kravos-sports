@@ -31,7 +31,7 @@ class Sofa(context: Context) {
     private val sp = context.getSharedPreferences("transport", Context.MODE_PRIVATE)
 
     /** Once direct access was blocked, go straight through the WebView bridge on later launches too. */
-    @Volatile var useBridge = sp.getBoolean("bridge", false)
+    @Volatile var useBridge = sp.getBoolean("bridge2", false)
         private set
     val bridgeStatus get() = bridge.status
 
@@ -40,8 +40,7 @@ class Sofa(context: Context) {
     @Volatile var lastError: String? = null
         private set
 
-    private val bases = listOf("https://api.sofascore.com/api/v1/", "https://www.sofascore.com/api/v1/")
-    @Volatile private var baseIdx = 0
+    private val API = "https://api.sofascore.com/api/v1/"
 
     /** Raw GET with TTL (seconds). Returns cached body if fresh enough. */
     suspend fun raw(path: String, ttl: Int, allowStale: Boolean = false): String {
@@ -78,18 +77,12 @@ class Sofa(context: Context) {
     private suspend fun fetch(path: String): String {
         if (!useBridge) {
             try {
-                return Http.get(bases[baseIdx] + path)
+                return Http.get(API + path)
             } catch (e: HttpException) {
-                if (e.code == 404) throw e
-                if (e.code == 403 || e.code == 429 || e.code >= 500) {
-                    if (baseIdx == 0) {
-                        baseIdx = 1
-                        try { return Http.get(bases[1] + path) } catch (e2: HttpException) { if (e2.code == 404) throw e2 }
-                    }
-                    Log.w(Http.TAG, "direct API blocked (${e.code}); switching to WebView bridge")
-                    useBridge = true
-                    sp.edit().putBoolean("bridge", true).apply()
-                } else throw e
+                if (e.code != 403 && e.code != 429) throw e
+                Log.w(Http.TAG, "direct API blocked (${e.code}); switching to WebView bridge")
+                useBridge = true
+                sp.edit().putBoolean("bridge2", true).apply()
             }
         }
         return bridge.get(path)
