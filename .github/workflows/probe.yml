@@ -1,51 +1,21 @@
 name: probe
+
 on:
+  push:
+    branches: [main]
+    paths: ['.github/probe/**', '.github/workflows/probe.yml']
   workflow_dispatch:
+
 permissions:
   contents: write
+
 jobs:
   probe:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch ESPN samples
-        run: |
-          mkdir -p probe
-          B=https://site.api.espn.com/apis/site/v2/sports
-          D=$(date -u +%Y%m%d); Y=$(date -u -d yesterday +%Y%m%d)
-          get() { curl -s -m 20 -o "probe/$1.json" -w "%{http_code} $1 %{size_download}\n" "$2" >> probe/index.txt; }
-          get soccer-all "$B/soccer/all/scoreboard?dates=$Y"
-          get ucl "$B/soccer/uefa.champions/scoreboard?dates=$Y"
-          get eng1 "$B/soccer/eng.1/scoreboard"
-          get srb1 "$B/soccer/srb.1/scoreboard"
-          get basket-nba "$B/basketball/nba/scoreboard?dates=$Y"
-          get basket-euroleague "$B/basketball/euroleague/scoreboard"
-          get basket-fiba "$B/basketball/fiba/scoreboard"
-          get tennis-atp "$B/tennis/atp/scoreboard"
-          get tennis-wta "$B/tennis/wta/scoreboard"
-          get hockey-nhl "$B/hockey/nhl/scoreboard?dates=$Y"
-          get f1 "$B/racing/f1/scoreboard"
-          get rugby "$B/rugby/scoreboard"
-          get mma "$B/mma/ufc/scoreboard"
-          get nfl "$B/football/nfl/scoreboard"
-          get soccer-leagues "https://sports.core.api.espn.com/v2/sports/soccer/leagues?limit=400"
-          get eng1-standings "https://site.api.espn.com/apis/v2/sports/soccer/eng.1/standings"
-          get nba-standings "https://site.api.espn.com/apis/v2/sports/basketball/nba/standings"
-          get eng1-teams "$B/soccer/eng.1/teams"
-          get search "https://site.web.api.espn.com/apis/common/v3/search?query=partizan&limit=10"
-          # summaries of finished events
-          EV=$(python3 -c "import json;d=json.load(open('probe/ucl.json'));e=[x for x in d.get('events',[]) if x['status']['type']['completed']];print(e[0]['id'] if e else '')")
-          [ -n "$EV" ] && get ucl-summary "$B/soccer/uefa.champions/summary?event=$EV"
-          EV=$(python3 -c "import json;d=json.load(open('probe/basket-nba.json'));e=[x for x in d.get('events',[]) if x['status']['type']['completed']];print(e[0]['id'] if e else '')")
-          [ -n "$EV" ] && get nba-summary "$B/basketball/nba/summary?event=$EV"
-          EV=$(python3 -c "import json;d=json.load(open('probe/tennis-atp.json'));print(d['events'][0]['id'] if d.get('events') else '')")
-          [ -n "$EV" ] && get atp-summary "$B/tennis/atp/summary?event=$EV"
-          TID=$(python3 -c "import json;d=json.load(open('probe/eng1-teams.json'));print(d['sports'][0]['leagues'][0]['teams'][0]['team']['id'])")
-          get team-schedule "$B/soccer/eng.1/teams/$TID/schedule"
-          get team "$B/soccer/eng.1/teams/$TID"
-          get soccer-dated "$B/soccer/all/scoreboard?dates=$D"
-          cat probe/index.txt
-      - name: Publish
-        env:
+      - run: python3 .github/probe/probe.py probe
+      - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash .github/scripts/publish-log.sh probe probe
