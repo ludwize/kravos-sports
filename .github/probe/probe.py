@@ -19,34 +19,17 @@ def get(name, url, headers=None):
     except Exception: return None
 F = "https://www.fotmob.com/api/data"
 L = "https://prod-cdn-public-api.livescore.com/v1/api/app"
-yd = (datetime.date.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
-get("fm_match", f"{F}/matchDetails?matchId=6106333")
-get("fm_match_srb", f"{F}/matchDetails?matchId=" + str(json.load(open('/dev/null')) if False else "0"))
-# find a Serbian league match from league page
-lg = get("fm_league182", f"{F}/leagues?id=182")
-mid = None
-try:
-    for m in lg["fixtures"]["allMatches"]:
-        if m.get("status", {}).get("finished"):
-            mid = m["id"]
-    get("fm_match_srb", f"{F}/matchDetails?matchId={mid}")
-except Exception as e:
-    log.write(f"no srb match {e}\n")
-get("fm_team", f"{F}/teams?id=8695")
-get("fm_team_partizan_search", f"{F}/search/suggest?term=partizan&lang=en")
-get("fm_search2", f"https://apigw.fotmob.com/searchapi/suggest?term=partizan&lang=en")
-get("fm_player", f"{F}/playerData?id=961995")
-get("fm_alllegues", f"{F}/allLeagues?locale=en&country=SRB")
-get("fm_live", f"{F}/matches?date={yd}&timezone=Europe%2FBelgrade&ccode3=SRB&includeNextDayLateNight=true")
-# livescore details
-for sp in ["basketball", "tennis", "hockey", "cricket", "handball", "volleyball"]:
-    get(f"ls_date_{sp}", f"{L}/date/{sp}/{yd}/2?countryCode=RS&locale=en&MD=1")
-get("ls_live_basket", f"{L}/live/basketball/2?countryCode=RS&locale=en&MD=1")
-get("ls_sb_basket", f"{L}/scoreboard/basketball/1867553?locale=en")
-get("ls_inc_basket", f"{L}/incidents/basketball/1867553?locale=en")
-get("ls_stat_basket", f"{L}/statistics/basketball/1867553?locale=en")
-get("ls_lineups_basket", f"{L}/lineups/basketball/1867553?locale=en")
-get("ls_table_nba", f"{L}/leaguetable/basketball/26128?locale=en")
-get("ls_stage_nba", f"{L}/stage/basketball/usa/nba/2?countryCode=RS&locale=en&MD=1")
+get("fm_heat", f"{F}/heatmap/match/6106333/heatmaps?heatmapUrl=https%3A%2F%2Fpub.fotmob.com%2Fprod%2Fdb%2Fapi%2Fheatmap%2Fmatch%2F6106333")
+get("fm_heat_pub", "https://pub.fotmob.com/prod/db/api/heatmap/match/6106333")
+get("fm_table", "https://data.fotmob.com/tables.ext.943230.fot.gz")
+get("fm_today", f"{F}/matches?date={datetime.date.today().strftime('%Y%m%d')}&timezone=Europe%2FBelgrade&ccode3=SRB")
+get("fm_stats_goals", "https://data.fotmob.com/stats/182/season/1000000451/goals.json")
+get("fm_league182_2025", f"{F}/leagues?id=182&season=2025%2F2026")
+get("ls_sb_tennis", f"{L}/date/tennis/20261020/2?countryCode=RS&locale=en&MD=1")
+get("ls_live_all_soccer", f"{L}/live/soccer/2?countryCode=RS&locale=en&MD=1")
+get("logo_fm", "https://images.fotmob.com/image_resources/logo/teamlogo/7998_small.png")
+get("logo_fm_league", "https://images.fotmob.com/image_resources/logo/leaguelogo/182.png")
+get("logo_ls", "https://lsm-static-prod.livescore.com/medium/enet/58542.png")
+get("logo_el", "https://media-cdn.incrowdsports.com/23610a1b-1c2e-4d2a-8fe4-ac2f8e400632.png")
 log.close()
 print(open(os.path.join(OUT, "index.txt")).read())
