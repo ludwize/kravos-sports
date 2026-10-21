@@ -222,9 +222,11 @@ class FotMob(private val net: Net) {
         // player stats (popup)
         val pStats = mutableMapOf<String, List<Pair<String, String>>>()
         val ratings = mutableMapOf<String, Double>()
+        val opta = mutableMapOf<String, String>()
         c.obj("playerStats")?.let { ps ->
             ps.keys().forEach { pid ->
                 val p = ps.optJSONObject(pid) ?: return@forEach
+                p.str("optaId")?.let { opta[it] = pid }
                 val rows = mutableListOf<Pair<String, String>>()
                 val groups = p.arr("stats")
                 for (gi in 0 until groups.length()) {
@@ -307,10 +309,20 @@ class FotMob(private val net: Net) {
             tableLeague = c.obj("table")?.str("parentLeagueId")?.let { "${Src.FM}:$it" } ?: tour.key,
             homeColor = colors?.str("home"),
             awayColor = colors?.str("away"),
-        ).also { c.str("heatmapUrl")?.let { u -> heatUrls[id] = u } }
+        ).also {
+            c.str("heatmapUrl")?.let { u -> heatUrls[id] = u }
+            lu?.let { l ->
+                for (side in listOf("homeTeam", "awayTeam")) for (part in listOf("starters", "subs")) {
+                    val a = l.obj(side)?.arr(part) ?: continue
+                    for (i in 0 until a.length()) a.optJSONObject(i)?.let { pl -> val o = pl.str("optaId"); val fid = pl.str("id"); if (o != null && fid != null) opta[o] = fid }
+                }
+            }
+            optaIds[id] = opta
+        }
     }
 
     private val heatUrls = java.util.concurrent.ConcurrentHashMap<String, String>()
+    private val optaIds = java.util.concurrent.ConcurrentHashMap<String, Map<String, String>>()
 
     /** Player heatmaps for a match: player id -> points (0..100, attacking to the right). */
     suspend fun heatmaps(id: String, live: Boolean): Map<String, List<HeatPoint>> {
@@ -325,7 +337,8 @@ class FotMob(private val net: Net) {
                 val pts = re.findAll(svg).map { m ->
                     HeatPoint((m.groupValues[1].toFloat() / 105f * 100f), (m.groupValues[2].toFloat() / 68f * 100f))
                 }.toList()
-                if (pts.isNotEmpty()) out[k.removePrefix("p")] = pts
+                val raw = k.removePrefix("p")
+                if (pts.isNotEmpty()) out[optaIds[id]?.get(raw) ?: optaIds[id]?.get(k) ?: raw] = pts
             }
             out
         }
@@ -342,7 +355,7 @@ class FotMob(private val net: Net) {
                     type = "goal",
                     cls = when { e.bool("ownGoal") -> "ownGoal"; e.str("suffix")?.contains("pen", true) == true || e.str("goalDescription")?.contains("Penalty", true) == true -> "penalty"; else -> "regular" },
                     time = time, addedTime = added, isHome = home,
-                    player = e.str("nameStr") ?: e.obj("player")?.str("name"),
+                    player = e.obj("player")?.str("name") ?: e.str("fullName") ?: e.str("nameStr"),
                     assist = e.str("assistStr")?.removePrefix("assist by ")?.trim(),
                     homeScore = ns?.optInt(0), awayScore = ns?.optInt(1),
                 )
@@ -351,7 +364,7 @@ class FotMob(private val net: Net) {
                 type = "card",
                 cls = when (e.str("card")) { "Red" -> "red"; "YellowRed" -> "yellowRed"; else -> "yellow" },
                 time = time, addedTime = added, isHome = home,
-                player = e.str("nameStr") ?: e.obj("player")?.str("name"),
+                player = e.obj("player")?.str("name") ?: e.str("fullName") ?: e.str("nameStr"),
                 text = e.str("description"),
             )
             "Substitution" -> {

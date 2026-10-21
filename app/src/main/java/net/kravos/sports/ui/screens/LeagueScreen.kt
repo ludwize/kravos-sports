@@ -157,7 +157,7 @@ private fun StandingTableCard(t: StandingTable, highlight: Set<String>, onTeam: 
             Text("#", Modifier.width(28.dp), fontSize = 11.sp, color = dim)
             Text("Tim", Modifier.weight(1f), fontSize = 11.sp, color = dim)
             listOfNotNull("U", "P", if (hasDraws) "N" else null, "I", if (hasPoints) "Gol" else "Koš", if (hasPoints) "Bod" else null).forEach {
-                Text(it, Modifier.width(if (it == "Gol" || it == "Koš") 58.dp else 26.dp), textAlign = TextAlign.Center, fontSize = 11.sp, color = dim)
+                Text(it, Modifier.width(if (it == "Gol" || it == "Koš") 50.dp else 24.dp), textAlign = TextAlign.Center, fontSize = 11.sp, color = dim)
             }
         }
         t.rows.forEach { row ->
@@ -182,8 +182,8 @@ private fun StandingTableCard(t: StandingTable, highlight: Set<String>, onTeam: 
                 Cell("${row.wins}")
                 if (hasDraws) Cell("${row.draws}")
                 Cell("${row.losses}")
-                Text("${row.scoresFor}:${row.scoresAgainst}", Modifier.width(58.dp), textAlign = TextAlign.Center, fontSize = 12.sp, color = dim)
-                if (hasPoints) Text("${row.points ?: 0}", Modifier.width(26.dp), textAlign = TextAlign.Center, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                Text("${row.scoresFor}:${row.scoresAgainst}", Modifier.width(50.dp), textAlign = TextAlign.Center, fontSize = 12.sp, color = dim)
+                if (hasPoints) Text("${row.points ?: 0}", Modifier.width(28.dp), textAlign = TextAlign.Center, fontSize = 13.sp, fontWeight = FontWeight.Bold)
             }
         }
         if (t.legend.isNotEmpty()) {
@@ -201,7 +201,7 @@ private fun StandingTableCard(t: StandingTable, highlight: Set<String>, onTeam: 
 }
 
 @Composable
-private fun Cell(s: String) = Text(s, Modifier.width(26.dp), textAlign = TextAlign.Center, fontSize = 13.sp)
+private fun Cell(s: String) = Text(s, Modifier.width(24.dp), textAlign = TextAlign.Center, fontSize = 13.sp)
 
 @Composable
 private fun EventsByRound(evs: List<Event>, empty: String) {
