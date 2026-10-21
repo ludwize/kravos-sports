@@ -73,6 +73,9 @@ scroll() { adb shell input swipe $((W / 2)) $((H * 3 / 4)) $((W / 2)) $((H / 4))
 
 shot 01-scores
 scroll; shot 02-scores-scroll
+tap_text "UTO"             # yesterday: finished matches
+sleep 6
+shot 03-yesterday
 tap_text "Kraj"            # a finished match row
 sleep 6
 shot 10-match
@@ -84,6 +87,7 @@ scroll; shot 15-lineups-scroll
 tap_text "Heatmapa"; sleep 12; shot 16-heat
 scroll; shot 17-heat-scroll
 scroll; shot 18-heat-scroll2
+tap_text "Šutevi"; sleep 4; shot 185-shots
 tap_text "Tabela"; sleep 4; shot 19-table
 tap_text "Međusobni"; sleep 5; shot 20-h2h
 adb shell input keyevent KEYCODE_BACK; sleep 2

@@ -148,6 +148,12 @@ fun Empty(text: String) =
 
 @Composable
 fun LiveDot(size: Dp = 7.dp) {
+    // respect "remove animations" (accessibility / battery saver / UI tests)
+    val ctx = androidx.compose.ui.platform.LocalContext.current
+    val animate = androidx.compose.runtime.remember {
+        android.provider.Settings.Global.getFloat(ctx.contentResolver, android.provider.Settings.Global.ANIMATOR_DURATION_SCALE, 1f) > 0f
+    }
+    if (!animate) { Box(Modifier.size(size).clip(CircleShape).background(K.Live)); return }
     val tr = rememberInfiniteTransition(label = "live")
     val a by tr.animateFloat(0.35f, 1f, infiniteRepeatable(tween(800), RepeatMode.Reverse), label = "a")
     Box(Modifier.size(size).alpha(a).clip(CircleShape).background(K.Live))

@@ -9,6 +9,15 @@ object Ranking {
         "TUR", "KOS", "SCO", "WAL", "NIR", "GEO", "ARM", "AZE", "ISR", "FRO", "KAZ", "ABA",
     )
     private val TOP_INT = listOf("champions league", "europa league", "conference league", "world cup", "euro", "nations league", "evroliga", "evrokup")
+    private val OTHER_CONT = listOf("caf ", "afc ", "concacaf", "conmebol", "libertadores", "sudamericana", "ofc ", "africa", "asian", "arab")
+
+    /** Well-known competitions get a fixed order inside their tier (FotMob league ids). */
+    private val ORDER = listOf(
+        "fm:42", "fm:73", "fm:10216", "fm:77", "fm:50", "fm:9806", "el:E", "el:U",   // UCL, UEL, UECL, WC, EURO, UNL, EL, EC
+        "fm:182", "fm:9497",                                                        // SuperLiga, Kup Srbije
+        "fm:47", "fm:87", "fm:55", "fm:54", "fm:53",                                // PL, LaLiga, Serie A, Bundesliga, Ligue 1
+    )
+    fun order(t: Tournament?): Int = t?.key?.let { k -> ORDER.indexOf(k).takeIf { it >= 0 } } ?: 99
 
     fun tier(t: Tournament?, favLeagues: Set<String>): Int {
         t ?: return 9
@@ -18,6 +27,7 @@ object Ranking {
         val youth = n.contains("u19") || n.contains("u21") || n.contains("u17") || n.contains("u20") || n.contains("youth") || n.contains("women") || n.contains("femen") || n.contains("kvinner") || n.contains("w ")
         return when {
             youth -> 7
+            OTHER_CONT.any { n.contains(it) } -> 6
             c == "SRB" -> 1
             (c == "INT" || c == "INT-2" || c == "EUR") && TOP_INT.any { n.contains(it) } -> 2
             c == "EUR" || n.contains("uefa") || n.contains("fiba") -> 2
@@ -33,6 +43,7 @@ object Ranking {
     fun <T> sortGroups(groups: Map<Tournament?, T>, favLeagues: Set<String>): List<Pair<Tournament?, T>> =
         groups.entries.sortedWith(
             compareBy<Map.Entry<Tournament?, T>> { tier(it.key, favLeagues) }
+                .thenBy { order(it.key) }
                 .thenByDescending { it.key?.priority ?: 0 }
                 .thenBy { it.key?.categoryName ?: "" }
                 .thenBy { it.key?.name ?: "" },
