@@ -28,9 +28,12 @@ not found: Igrači
 shot 32-bb-players
 not found: Tenis
 shot 33-tennis
+not found: Formula 1
+shot 34-f1
+not found: Fudbal
 not found: Lige
 shot 40-leagues
-not found: Premijer liga
+not found: Premier League
 shot 41-pl-table
 not found: Igrači
 shot 42-pl-players
