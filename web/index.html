@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b0d10">
+<title>Kravos Sports</title>
+<style>
+:root{--bg:#0b0d10;--card:#14181d;--card2:#1b2027;--line:#252b33;--tx:#eef1f5;--dim:#8b95a3;--acc:#3ddc84;--live:#ff4d4f;--home:#4da3ff;--away:#ffb04d}
+@media (prefers-color-scheme: light){:root{--bg:#f3f5f8;--card:#fff;--card2:#eef1f5;--line:#dde2e9;--tx:#12161b;--dim:#677282;--acc:#0d9f55;--live:#d92d30;--home:#1d6fd1;--away:#d97a0a}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{padding-bottom:env(safe-area-inset-bottom)}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.wrap{max-width:760px;margin:0 auto;padding:0 12px 40px}
+header.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 6px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:0 2px 8px}
+.brand b{font-size:18px;letter-spacing:.2px}
+.brand small{color:var(--dim)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0 6px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--dim);font-size:14px}
+.chip.on{background:var(--tx);color:var(--bg);border-color:var(--tx);font-weight:600}
+.dates{display:flex;gap:6px;align-items:center;padding-top:2px}
+.dates .nav{width:34px;height:34px;border-radius:50%;background:var(--card);border:1px solid var(--line);font-size:18px;line-height:1}
+.dates .day{flex:1;text-align:center;font-weight:600}
+.dates .day small{display:block;font-weight:400;color:var(--dim);font-size:12px}
+.tog{padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--dim);font-size:13px}
+.tog.on{border-color:var(--live);color:var(--live)}
+.lg{background:var(--card);border-radius:14px;margin:12px 0;overflow:hidden;border:1px solid var(--line)}
+.lg h3{margin:0;padding:10px 12px;font-size:13px;display:flex;align-items:center;gap:8px;background:var(--card2);color:var(--dim);font-weight:600;cursor:default}
+.lg h3 img{width:18px;height:18px;object-fit:contain}
+.lg h3 span.c{font-weight:400;opacity:.8}
+.lg h3 a{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.ev{display:grid;grid-template-columns:54px 1fr auto;gap:8px;align-items:center;padding:10px 12px;border-top:1px solid var(--line);cursor:pointer}
+.ev:hover{background:var(--card2)}
+.st{font-size:12px;color:var(--dim);text-align:center;line-height:1.2}
+.st.live{color:var(--live);font-weight:700}
+.tm{display:flex;align-items:center;gap:8px;min-width:0;height:24px}
+.tm img{width:20px;height:20px;object-fit:contain;flex:none}
+.tm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tm.w span{font-weight:700}
+.tm.l span{color:var(--dim)}
+.sc{display:flex;flex-direction:column;align-items:flex-end;gap:0;font-variant-numeric:tabular-nums;min-width:48px}
+.sc div{height:24px;display:flex;gap:10px;align-items:center;font-weight:700}
+.sc i{font-style:normal;color:var(--dim);font-weight:400;font-size:13px}
+.rd{display:inline-block;width:8px;height:11px;background:var(--live);border-radius:2px;margin-left:2px}
+.empty,.err{color:var(--dim);text-align:center;padding:48px 12px}
+.err{color:var(--live)}
+.spin{opacity:.6}
+.race{padding:6px 12px 10px;border-top:1px solid var(--line)}
+.race div{display:flex;gap:10px;padding:3px 0}
+.race b{width:22px;color:var(--dim);font-weight:600}
+/* detail */
+.back{display:inline-flex;align-items:center;gap:6px;padding:10px 2px;color:var(--dim)}
+.hd{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 10px;text-align:center}
+.hd .lgn{color:var(--dim);font-size:13px;margin-bottom:10px}
+.hd .row{display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center}
+.hd .t{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.hd .t img{width:52px;height:52px;object-fit:contain}
+.hd .t b{font-size:14px;overflow-wrap:anywhere}
+.hd .big{font-size:36px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hd .big small{display:block;font-size:13px;font-weight:600;color:var(--dim)}
+.hd .big.live small{color:var(--live)}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:12px 0;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 12px;margin-bottom:12px}
+.inc{display:grid;grid-template-columns:1fr 44px 1fr;gap:6px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.inc:first-child{border-top:0}
+.inc .m{text-align:center;color:var(--dim);font-size:12px}
+.inc .l{text-align:right}
+.inc small{display:block;color:var(--dim);font-size:12px}
+.inc.per{display:block;text-align:center;color:var(--dim);font-size:12px;padding:6px 0}
+.stg{padding:8px 0}
+.stg h4{margin:10px 0 4px;font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.6px}
+.stat .v{display:flex;justify-content:space-between;font-size:14px;font-variant-numeric:tabular-nums}
+.stat .nm{color:var(--dim);font-size:13px}
+.bar{display:flex;gap:4px;height:5px;margin:3px 0 9px}
+.bar>div{flex:1;background:var(--card2);border-radius:3px;overflow:hidden;display:flex}
+.bar>div:first-child{justify-content:flex-end}
+.bar i{display:block;height:100%}
+.lu{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lu h4{margin:10px 0 6px;font-size:12px;color:var(--dim)}
+.pl{display:flex;gap:8px;align-items:baseline;padding:4px 0;font-size:14px}
+.pl em{font-style:normal;width:22px;color:var(--dim);text-align:right;flex:none}
+.pl span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl b{font-size:12px;padding:1px 5px;border-radius:5px;background:var(--card2)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:14px}
+th{color:var(--dim);font-weight:500;font-size:12px;text-align:right;padding:6px 4px}
+td{padding:7px 4px;text-align:right;border-top:1px solid var(--line)}
+th:nth-child(2),td:nth-child(2){text-align:left}
+td:first-child,th:first-child{text-align:left;width:26px}
+td.tn{display:flex;gap:8px;align-items:center;border:0}
+td.tn img{width:18px;height:18px;object-fit:contain}
+tr.z td:first-child{box-shadow:inset 3px 0 0 var(--zc,transparent)}
+.note{color:var(--dim);font-size:12px;text-align:center;padding:16px 0}
+.sets{display:flex;gap:10px;justify-content:center;margin-top:8px;color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><b>Kravos Sports</b><small id="upd"></small></div>
+    <div class="chips" id="sports"></div>
+    <div class="dates" id="dates"></div>
+  </header>
+  <main id="main"></main>
+  <div class="note">Podaci: FotMob, ESPN, EuroLeague. Samo za lične potrebe.</div>
+</div>
+<script>
+"use strict";
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const pad = n => String(n).padStart(2, "0");
+const ymd = d => `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+const sameDay = (a, b) => ymd(a) === ymd(b);
+const hhmm = ms => new Date(ms).toLocaleTimeString("sr-Latn-RS", { hour: "2-digit", minute: "2-digit" });
+const num = v => (v === null || v === undefined || v === "" ? null : Number(v));
+const TZ = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Belgrade");
+
+const cache = new Map(), inflight = new Map();
+async function getJSON(url, ttl = 30) {
+  const hit = cache.get(url);
+  if (hit && Date.now() - hit.t < ttl * 1000) return hit.v;
+  if (inflight.has(url)) return inflight.get(url);
+  const p = fetch(url).then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(v => { cache.set(url, { t: Date.now(), v }); return v; })
+    .finally(() => inflight.delete(url));
+  inflight.set(url, p);
+  return p;
+}
+
+/* ---------- sports ---------- */
+const SPORTS = [
+  { id: "football", label: "Fudbal" },
+  { id: "basketball", label: "Košarka" },
+  { id: "tennis", label: "Tenis" },
+  { id: "hockey", label: "Hokej" },
+  { id: "f1", label: "Formula 1" },
+  { id: "mma", label: "MMA (UFC)" },
+  { id: "nfl", label: "NFL" },
+  { id: "mlb", label: "MLB" },
+];
+const ESPN = {
+  basketball: ["basketball/nba"], tennis: ["tennis/atp", "tennis/wta"], hockey: ["hockey/nhl"],
+  f1: ["racing/f1"], mma: ["mma/ufc"], nfl: ["football/nfl"], mlb: ["baseball/mlb"],
+};
+const ESPN_BASE = "https://site.api.espn.com/apis/site/v2/sports";
+const FM = "https://www.fotmob.com/api/data";
+const fmTeamLogo = id => `https://images.fotmob.com/image_resources/logo/teamlogo/${id}_small.png`;
+const fmLeagueLogo = id => `https://images.fotmob.com/image_resources/logo/leaguelogo/${id}.png`;
+
+/* ---------- state ---------- */
+const state = { sport: "football", date: new Date(), liveOnly: false, events: [], loading: false, error: null };
+try { const s = localStorage.getItem("ks.sport"); if (SPORTS.some(x => x.id === s)) state.sport = s; } catch (e) {}
+
+/* ---------- data: FotMob ---------- */
+function fmStatus(st) {
+  if (!st) return { k: "ns" };
+  const short = st.reason && st.reason.short;
+  if (st.cancelled) return { k: "x", label: (st.reason && st.reason.long) || "Otkazano" };
+  if (st.finished) return { k: "ft", label: short === "AET" ? "Prod." : short === "Pen" ? "Pen." : "Kraj" };
+  if (st.ongoing || st.started) {
+    const lt = st.liveTime && st.liveTime.short ? String(st.liveTime.short).replace(/[\u200e\u200f]/g, "").replace("’", "'") : null;
+    return { k: "live", label: lt || (short === "HT" ? "Poluvreme" : "Uživo") };
+  }
+  return { k: "ns" };
+}
+const scoreStr = s => { const p = String(s || "").split("-").map(x => parseInt(x.trim(), 10)); return [isNaN(p[0]) ? null : p[0], isNaN(p[1]) ? null : p[1]]; };
+
+async function fmDay(date) {
+  const today = sameDay(date, new Date());
+  const j = await getJSON(`${FM}/matches?date=${ymd(date)}&timezone=${TZ}&ccode3=SRB`, today ? 15 : 300);
+  const out = [];
+  for (const lg of j.leagues || []) {
+    const pid = lg.primaryId || lg.id;
+    const league = { key: "fm:" + pid, name: lg.name, country: lg.ccode, logo: fmLeagueLogo(pid), link: "#/l/" + pid, gid: "fm:" + lg.id };
+    for (const m of lg.matches || []) {
+      const st = fmStatus(m.status);
+      let [hs, as] = scoreStr(m.status && m.status.scoreStr);
+      if (hs === null) hs = num(m.home && m.home.score);
+      if (as === null) as = num(m.away && m.away.score);
+      if (st.k === "ns") { hs = as = null; }
+      out.push({
+        key: "fm:" + m.id, href: "#/m/fm/" + m.id, sport: "football", league, st,
+        start: m.status && m.status.utcTime ? Date.parse(m.status.utcTime) : (m.timeTS || 0),
+        home: { name: m.home.longName || m.home.name, logo: fmTeamLogo(m.home.id) },
+        away: { name: m.away.longName || m.away.name, logo: fmTeamLogo(m.away.id) },
+        hs, as, hpen: num(m.home.penScore), apen: num(m.away.penScore),
+        hred: num(m.home.redCards) || 0, ared: num(m.away.redCards) || 0,
+      });
+    }
+  }
+  return out;
+}
+
+/* ---------- data: ESPN ---------- */
+function espnStatus(s) {
+  const t = s && s.type; if (!t) return { k: "ns" };
+  if (t.state === "post") return /CANCEL|POSTPONED/.test(t.name || "") ? { k: "x", label: t.description } : { k: "ft", label: "Kraj" };
+  if (t.state === "in") return { k: "live", label: t.shortDetail || s.displayClock || "Uživo" };
+  return { k: "ns" };
+}
+const SESSION = { FP1: "1. trening", FP2: "2. trening", FP3: "3. trening", Qual: "Kvalifikacije", Race: "Trka", Sprint: "Sprint", SQ: "Sprint kval.", SS: "Sprint kval." };
+
+function espnEvents(root, sport, path, date) {
+  const lg0 = (root.leagues || [])[0] || {};
+  const base = { key: "espn:" + path, name: lg0.name || path, country: sport === "f1" || sport === "mma" ? "INT" : "USA", logo: lg0.logos && lg0.logos[0] && lg0.logos[0].href };
+  const out = [];
+  const start = c => Date.parse(String(c.date || c.startDate || "").replace(/^(\d{4}-\d\d-\d\dT\d\d:\d\d)Z$/, "$1:00Z"));
+  for (const ev of root.events || []) {
+    let comps = ev.competitions || [];
+    let gname = null;
+    if (!comps.length && ev.groupings) {
+      // tennis: tournament -> draws -> matches
+      for (const g of ev.groupings) for (const c of g.competitions || []) out.push(...espnComp(c, ev, g.grouping && g.grouping.displayName));
+      continue;
+    }
+    for (const c of comps) out.push(...espnComp(c, ev, null));
+  }
+  function espnComp(c, ev, draw) {
+    const st = espnStatus(c.status || ev.status);
+    const cs = c.competitors || [];
+    const league = Object.assign({}, base, {
+      name: sport === "tennis" ? (ev.name + (draw ? " · " + draw : "")) : (sport === "f1" || sport === "mma") ? ev.name : base.name,
+      key: sport === "tennis" || sport === "f1" || sport === "mma" ? "espn:" + ev.id + (draw || "") : base.key,
+    });
+    const ms = start(c);
+    if (sport === "f1") {
+      const abbr = (c.type && c.type.abbreviation) || "";
+      const res = cs.map(r => ({ pos: r.order, name: r.athlete && r.athlete.displayName, team: r.team && r.team.displayName })).sort((a, b) => a.pos - b.pos);
+      return [{ key: `espn:${path}:${ev.id}:${c.id}`, href: `#/m/espn/${path}/${ev.id}`, sport, league, st, start: ms, f1: true,
+        title: (ev.shortName || ev.name) + " · " + (SESSION[abbr] || abbr), race: res }];
+    }
+    if (cs.length < 2) return [];
+    const side = h => cs.find(x => x.homeAway === (h ? "home" : "away")) || cs[h ? 0 : 1];
+    const h = side(true), a = side(false);
+    const who = o => {
+      const t = o.team, at = o.athlete;
+      if (t) return { name: t.displayName, logo: t.logo };
+      return { name: at && (at.displayName || at.shortName), logo: at && at.flag && at.flag.href };
+    };
+    const ls = o => (o.linescores || []).map(x => num(x.value)).filter(x => x !== null);
+    const ns = st.k === "ns";
+    return [{ key: `espn:${path}:${c.id || ev.id}`, href: `#/m/espn/${path}/${c.id || ev.id}`, sport, league, st, start: ms,
+      home: who(h), away: who(a),
+      hs: ns || sport === "mma" ? null : num(h.score), as: ns || sport === "mma" ? null : num(a.score),
+      sets: sport === "tennis" && !ns ? [ls(h), ls(a)] : null,
+      win: h.winner ? 1 : a.winner ? 2 : 0, note: sport === "mma" ? (c.type && c.type.abbreviation) : null }];
+  }
+  if (sport === "f1" || sport === "mma") return out.filter(e => sameDay(new Date(e.start), date));
+  return out;
+}
+async function espnDay(sport, date) {
+  const today = sameDay(date, new Date());
+  const wide = sport === "f1" || sport === "mma";
+  const q = wide ? `${ymd(new Date(date.getTime() - 3 * 864e5))}-${ymd(new Date(date.getTime() + 3 * 864e5))}` : ymd(date);
+  const res = await Promise.allSettled(ESPN[sport].map(p => getJSON(`${ESPN_BASE}/${p}/scoreboard?dates=${q}`, today ? 20 : 300).then(r => espnEvents(r, sport, p, date))));
+  const ok = res.filter(r => r.status === "fulfilled");
+  if (!ok.length) throw res[0].reason;
+  return ok.flatMap(r => r.value);
+}
+
+/* ---------- data: EuroLeague ---------- */
+async function elDay(date) {
+  const j = await getJSON("el.json?" + Math.floor(Date.now() / 300000), 120);
+  const now = Date.now();
+  const evs = j.games.filter(g => g.utc && sameDay(new Date(g.utc), date)).map(g => {
+    const start = Date.parse(g.utc);
+    const league = { key: "el:" + g.c, name: j.comps[g.c] || g.c, country: "EUR", logo: null };
+    return {
+      key: `el:${g.c}:${g.code}`, href: `#/m/el/${g.c}/${g.code}`, sport: "basketball", league, start, _season: j.season, _c: g.c, _code: g.code,
+      st: g.played ? { k: "ft", label: "Kraj" } : { k: "ns" },
+      home: { name: g.h.name, logo: g.h.logo }, away: { name: g.a.name, logo: g.a.logo },
+      hs: g.played ? g.hs : null, as: g.played ? g.as : null, sets: g.played ? [g.hp, g.ap] : null,
+      round: g.round,
+    };
+  });
+  // live overlay for games that should be running
+  await Promise.all(evs.filter(e => e.st.k !== "ft" && e.start <= now + 60000 && now - e.start < 4 * 36e5).map(async e => {
+    try {
+      const h = await getJSON(`https://live.euroleague.net/api/Header?gamecode=${e._code}&seasoncode=${e._c}${e._season}`, 10);
+      const a = num(h.ScoreA), b = num(h.ScoreB);
+      const q = [1, 2, 3, 4].map(i => [num(h["ScoreQuarter" + i + "A"]), num(h["ScoreQuarter" + i + "B"])]);
+      const per = k => { let prev = 0; const o = []; for (const v of q.map(x => x[k])) { if (!v || v <= 0) break; o.push(v - prev); prev = v; } return o; };
+      const live = !!h.Live;
+      if (live) {
+        const qq = String(h.Quarter || "").trim();
+        e.st = { k: "live", label: (/^\d+$/.test(qq) ? "Q" + qq : qq) + " " + String(h.RemainingPartialTime || "").trim() };
+        e.hs = a; e.as = b; e.sets = [per(0), per(1)];
+      } else if ((a || 0) > 0 && now - e.start > 90 * 60000) {
+        e.st = { k: "ft", label: "Kraj" }; e.hs = a; e.as = b; e.sets = [per(0), per(1)];
+      }
+    } catch (err) { /* keep the schedule row */ }
+  }));
+  return evs;
+}
+
+/* ---------- list view ---------- */
+const FM_ORDER = ["fm:42", "fm:73", "fm:10216", "fm:77", "fm:50", "fm:9806", "el:E", "el:U", "fm:182", "fm:9497", "fm:47", "fm:87", "fm:55", "fm:54", "fm:53"];
+const BIG = new Set(["ENG", "ESP", "ITA", "GER", "FRA"]);
+function tier(l) {
+  const i = FM_ORDER.indexOf(l.key); if (i >= 0) return [i < 8 ? 0 : 1, i];
+  if (l.country === "SRB") return [1, 20];
+  if (l.country === "INT" || l.country === "EUR") return [2, 0];
+  if (BIG.has(l.country)) return [3, 0];
+  if (/^(atp|wta)/i.test(l.name)) return [2, 5];
+  return [4, 0];
+}
+
+async function loadEvents() {
+  const sp = state.sport, d = new Date(state.date);
+  if (sp === "football") return fmDay(d);
+  if (sp === "basketball") {
+    const r = await Promise.allSettled([elDay(d), espnDay("basketball", d)]);
+    const ok = r.filter(x => x.status === "fulfilled");
+    if (!ok.length) throw r[0].reason;
+    return ok.flatMap(x => x.value);
+  }
+  return espnDay(sp, d);
+}
+
+async function refresh(silent) {
+  const my = ++refresh.n;
+  if (!silent) { state.loading = true; state.error = null; renderList(); }
+  try {
+    const ev = await loadEvents();
+    if (my !== refresh.n) return;
+    state.events = ev; state.error = null;
+    $("#upd").textContent = "ažurirano " + hhmm(Date.now());
+  } catch (e) {
+    if (my !== refresh.n) return;
+    if (!silent) { state.events = []; state.error = "Podaci trenutno nisu dostupni (" + e.message + ")"; }
+  }
+  state.loading = false;
+  if (!location.hash || location.hash === "#/") renderList();
+}
+refresh.n = 0;
+
+function renderChrome() {
+  $("#sports").innerHTML = SPORTS.map(s => `<button class="chip ${s.id === state.sport ? "on" : ""}" data-sp="${s.id}">${s.label}</button>`).join("");
+  const d = state.date, today = sameDay(d, new Date());
+  const wd = d.toLocaleDateString("sr-Latn-RS", { weekday: "long" });
+  const full = d.toLocaleDateString("sr-Latn-RS", { day: "numeric", month: "long", year: "numeric" });
+  $("#dates").innerHTML = `<button class="nav" data-d="-1" aria-label="Prethodni dan">‹</button>
+    <button class="day" data-d="0">${today ? "Danas" : esc(wd)}<small>${esc(full)}</small></button>
+    <button class="nav" data-d="1" aria-label="Sledeći dan">›</button>
+    <button class="tog ${state.liveOnly ? "on" : ""}" data-live="1">Uživo</button>`;
+}
+
+function evRow(e) {
+  const st = e.st, ns = st.k === "ns";
+  const status = st.k === "ns" ? hhmm(e.start) : esc(st.label || "");
+  if (e.f1) {
+    return `<a class="ev" href="${e.href}" style="grid-template-columns:54px 1fr"><div class="st ${st.k === "live" ? "live" : ""}">${st.k === "ns" ? hhmm(e.start) : esc(st.label || "Kraj")}</div>
+      <div><div style="font-weight:600">${esc(e.title)}</div>${e.race.length && st.k !== "ns" ? `<div class="race" style="border:0;padding:4px 0 0">${e.race.slice(0, 3).map(r => `<div><b>${r.pos}</b><span>${esc(r.name)}</span></div>`).join("")}</div>` : ""}</div></a>`;
+  }
+  const w = e.win || (e.st.k === "ft" && e.hs !== null && e.as !== null ? (e.hs > e.as ? 1 : e.as > e.hs ? 2 : 0) : 0);
+  const pen = (a, b) => (a !== null && a !== undefined ? ` <i>(${a})</i>` : "");
+  let hsTxt = e.hs === null || e.hs === undefined ? "" : e.hs, asTxt = e.as === null || e.as === undefined ? "" : e.as;
+  if (e.sport === "tennis" && e.sets) {
+    hsTxt = e.sets[0].map(String).join(" "); asTxt = e.sets[1].map(String).join(" ");
+  }
+  const red = n => n ? `<span class="rd"></span>`.repeat(Math.min(n, 2)) : "";
+  return `<a class="ev" href="${e.href}">
+    <div class="st ${st.k === "live" ? "live" : ""}">${status}${e.round ? `<br>${esc(e.round)}` : ""}</div>
+    <div>
+      <div class="tm ${w === 2 ? "l" : w === 1 ? "w" : ""}">${e.home.logo ? `<img loading="lazy" src="${esc(e.home.logo)}" alt="">` : ""}<span>${esc(e.home.name)}</span>${red(e.hred)}</div>
+      <div class="tm ${w === 1 ? "l" : w === 2 ? "w" : ""}">${e.away.logo ? `<img loading="lazy" src="${esc(e.away.logo)}" alt="">` : ""}<span>${esc(e.away.name)}</span>${red(e.ared)}</div>
+    </div>
+    <div class="sc"><div>${e.sport === "tennis" ? esc(hsTxt) : hsTxt}${pen(e.hpen)}</div><div>${e.sport === "tennis" ? esc(asTxt) : asTxt}${pen(e.apen)}</div></div></a>`;
+}
+
+function renderList() {
+  renderChrome();
+  const m = $("#main");
+  if (state.loading && !state.events.length) { m.innerHTML = `<div class="empty spin">Učitavam…</div>`; return; }
+  if (state.error) { m.innerHTML = `<div class="err">${esc(state.error)}</div>`; return; }
+  let evs = state.events.slice();
+  if (state.liveOnly) evs = evs.filter(e => e.st.k === "live");
+  if (!evs.length) { m.innerHTML = `<div class="empty">${state.liveOnly ? "Trenutno nema utakmica uživo." : "Nema događaja za ovaj dan."}</div>`; return; }
+  const groups = new Map();
+  for (const e of evs) { const k = e.league.name + "|" + e.league.key; if (!groups.has(k)) groups.set(k, { l: e.league, evs: [] }); groups.get(k).evs.push(e); }
+  const list = [...groups.values()].sort((a, b) => {
+    const ta = tier(a.l), tb = tier(b.l);
+    return ta[0] - tb[0] || ta[1] - tb[1] || a.l.name.localeCompare(b.l.name);
+  });
+  m.innerHTML = list.map(g => {
+    g.evs.sort((a, b) => (a.st.k === "live" ? -1 : 0) - (b.st.k === "live" ? -1 : 0) || a.start - b.start);
+    const head = `${g.l.logo ? `<img loading="lazy" src="${esc(g.l.logo)}" alt="">` : ""}<span>${esc(g.l.name)}${g.l.country && g.l.country.length === 3 && !["INT", "EUR", "USA"].includes(g.l.country) ? ` <span class="c">· ${esc(g.l.country)}</span>` : ""}</span>`;
+    return `<section class="lg"><h3>${g.l.link ? `<a href="${g.l.link}">${head}</a>` : `<a>${head}</a>`}</h3>${g.evs.map(evRow).join("")}</section>`;
+  }).join("");
+}
+
+/* ---------- detail: shared ---------- */
+function hdr(e, extra) {
+  const live = e.st.k === "live";
+  const mid = e.st.k === "ns" ? `${hhmm(e.start)}<small>${esc(new Date(e.start).toLocaleDateString("sr-Latn-RS", { day: "numeric", month: "short" }))}</small>`
+    : `${e.hs ?? "-"} : ${e.as ?? "-"}<small>${esc(e.st.label || "")}</small>`;
+  return `<div class="hd"><div class="lgn">${esc(e.league.name)}${e.round ? " · " + esc(e.round) : ""}</div>
+    <div class="row"><div class="t">${e.home.logo ? `<img src="${esc(e.home.logo)}" alt="">` : ""}<b>${esc(e.home.name)}</b></div>
+    <div class="big ${live ? "live" : ""}">${mid}</div>
+    <div class="t">${e.away.logo ? `<img src="${esc(e.away.logo)}" alt="">` : ""}<b>${esc(e.away.name)}</b></div></div>${extra || ""}</div>`;
+}
+function setsRow(e) {
+  if (!e.sets || !e.sets[0].length) return "";
+  return `<div class="sets">${e.sets[0].map((v, i) => `<span>${v} : ${e.sets[1][i] ?? "-"}</span>`).join("")}</div>`;
+}
+function back() { return `<a class="back" href="#/" data-back="1">‹ Nazad</a>`; }
+function statsHtml(groups) {
+  return groups.map(g => `<div class="stg"><h4>${esc(g.title)}</h4>${g.items.map(s => {
+    const a = parseFloat(String(s.h).replace(",", ".")) || 0, b = parseFloat(String(s.a).replace(",", ".")) || 0, t = a + b;
+    const pa = t ? Math.round(a / t * 100) : 0, pb = t ? 100 - pa : 0;
+    return `<div class="stat"><div class="v"><b>${esc(s.h)}</b><span class="nm">${esc(s.name)}</span><b>${esc(s.a)}</b></div>
+      <div class="bar"><div><i style="width:${pa}%;background:var(--home)"></i></div><div><i style="width:${pb}%;background:var(--away)"></i></div></div></div>`;
+  }).join("")}</div>`).join("");
+}
+
+/* ---------- detail: football ---------- */
+const FM_STAT_SR = { "Top stats": "Najvažnije", "Shots": "Šutevi", "Expected goals (xG)": "Očekivani golovi (xG)", "Passes": "Dodavanja", "Defence": "Odbrana", "Duels": "Duelovi", "Discipline": "Disciplina", "Ball possession": "Posed lopte", "Total shots": "Ukupno šuteva", "Shots on target": "Šutevi u okvir", "Big chances": "Velike šanse", "Corners": "Korneri", "Fouls committed": "Prekršaji", "Yellow cards": "Žuti kartoni", "Red cards": "Crveni kartoni", "Offsides": "Ofsajdi", "Accurate passes": "Tačna dodavanja", "Passes": "Dodavanja" };
+const sr = s => FM_STAT_SR[s] || s;
+
+function fmIncidents(evts, e) {
+  return (evts || []).map(x => {
+    const t = (x.time ?? "") + (x.overloadTime ? "+" + x.overloadTime : "");
+    const side = x.isHome === true ? "l" : x.isHome === false ? "r" : null;
+    const pn = (x.player && x.player.name) || x.fullName || x.nameStr || "";
+    let icon = "", body = "", sub = "";
+    switch (x.type) {
+      case "Goal": icon = "⚽"; body = pn; sub = [x.ownGoal ? "autogol" : /pen/i.test(x.suffix || x.goalDescription || "") ? "penal" : "", x.assistStr ? String(x.assistStr).replace(/^assist by /i, "asist: ") : "", x.newScore ? x.newScore[0] + " : " + x.newScore[1] : ""].filter(Boolean).join(" · "); break;
+      case "Card": icon = x.card === "Red" ? "🟥" : x.card === "YellowRed" ? "🟨🟥" : "🟨"; body = pn; break;
+      case "Substitution": icon = "🔁"; body = (x.swap && x.swap[0] && x.swap[0].name) || ""; sub = "izlazi: " + ((x.swap && x.swap[1] && x.swap[1].name) || ""); break;
+      case "MissedPenalty": icon = "✖"; body = pn; sub = "promašen penal"; break;
+      case "VAR": icon = "📺"; body = pn; sub = "VAR"; break;
+      case "Half": return `<div class="inc per">${esc({ HT: "Poluvreme", FT: "Kraj", AET: "Posle produžetaka", Pen: "Penali" }[x.halfStrShort] || x.halfStrShort || "")}${x.homeScore !== undefined ? ` · ${x.homeScore} : ${x.awayScore}` : ""}</div>`;
+      default: return "";
+    }
+    const cell = `${icon} ${esc(body)}${sub ? `<small>${esc(sub)}</small>` : ""}`;
+    return `<div class="inc"><div class="l">${side === "l" ? cell : ""}</div><div class="m">${esc(t)}'</div><div>${side === "r" ? cell : ""}</div></div>`;
+  }).join("");
+}
+
+function fmLineup(side) {
+  if (!side) return `<div class="note">Nema podataka</div>`;
+  const row = (p, sub) => `<div class="pl"><em>${esc(p.shirtNumber || "")}</em><span>${esc(p.name)}${p.isCaptain ? " (C)" : ""}</span>${p.performance && p.performance.rating ? `<b>${Number(p.performance.rating).toFixed(1)}</b>` : ""}</div>`;
+  return `<h4>${esc(side.formation || "")}${side.coach && side.coach.name ? " · " + esc(side.coach.name) : ""}</h4>
+    ${(side.starters || []).map(p => row(p)).join("")}
+    ${(side.subs || []).length ? `<h4>Klupa</h4>${side.subs.map(p => row(p)).join("")}` : ""}`;
+}
+
+function renderFmTable(j) {
+  const tabs = [];
+  const t = j.table;
+  if (Array.isArray(t)) for (const x of t) {
+    const d = x.data || {};
+    if (d.tables) d.tables.forEach(s => tabs.push(s)); else tabs.push(d);
+  }
+  if (!tabs.length) return `<div class="note">Tabela nije dostupna.</div>`;
+  return tabs.map(d => {
+    const rows = (d.table && d.table.all) || [];
+    if (!rows.length) return "";
+    const zone = {};
+    for (const l of d.legend || []) for (const i of l.indices || []) zone[i] = l.color;
+    return `<div class="panel">${d.leagueName ? `<h4 style="margin:10px 0 0;color:var(--dim);font-size:12px">${esc(d.leagueName)}</h4>` : ""}
+      <table><tr><th>#</th><th>Tim</th><th>U</th><th>P</th><th>N</th><th>I</th><th>GR</th><th>Bod</th></tr>
+      ${rows.map((r, i) => `<tr class="z" style="--zc:${esc(r.qualColor || zone[i] || "transparent")}"><td>${r.idx}</td><td class="tn"><img loading="lazy" src="${fmTeamLogo(r.id)}" alt=""><span>${esc(r.shortName || r.name)}</span></td><td>${r.played}</td><td>${r.wins}</td><td>${r.draws}</td><td>${r.losses}</td><td>${esc(r.goalConDiff ?? r.scoresStr ?? "")}</td><td><b>${r.pts ?? ""}</b></td></tr>`).join("")}</table></div>`;
+  }).join("");
+}
+
+async function showFmMatch(id, tab) {
+  const m = $("#main");
+  m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  let j;
+  try { j = await getJSON(`${FM}/matchDetails?matchId=${id}`, 10); }
+  catch (err) { m.innerHTML = back() + `<div class="err">Utakmica nije dostupna (${esc(err.message)})</div>`; return; }
+  if (!location.hash.startsWith("#/m/fm/" + id)) return;
+  const g = j.general || {}, h = j.header || {}, c = j.content || {};
+  const ht = (h.teams || [])[0] || {}, at = (h.teams || [])[1] || {};
+  const st = fmStatus(h.status);
+  const e = {
+    league: { name: g.leagueName || "" }, round: g.leagueRoundName && !/^\d+$/.test(g.leagueRoundName) ? g.leagueRoundName : (g.leagueRoundName ? g.leagueRoundName + ". kolo" : ""),
+    st, start: h.status && h.status.utcTime ? Date.parse(h.status.utcTime) : 0,
+    home: { name: ht.name, logo: fmTeamLogo(g.homeTeam && g.homeTeam.id || ht.id) }, away: { name: at.name, logo: fmTeamLogo(g.awayTeam && g.awayTeam.id || at.id) },
+    hs: st.k === "ns" ? null : ht.score, as: st.k === "ns" ? null : at.score,
+  };
+  const tabs = [["ov", "Pregled"], ["st", "Statistika"], ["lu", "Postave"], ["tb", "Tabela"]];
+  const cur = tab || "ov";
+  let body = "";
+  if (cur === "ov") {
+    const evs = (((c.matchFacts || {}).events || {}).events) || [];
+    const info = (c.matchFacts || {}).infoBox || {};
+    const lines = [];
+    if (info.Stadium && info.Stadium.name) lines.push("Stadion: " + info.Stadium.name);
+    if (info.Referee && info.Referee.text) lines.push("Sudija: " + info.Referee.text);
+    if (info.Attendance) lines.push("Gledalaca: " + info.Attendance);
+    const inc = fmIncidents(evs.slice().sort((a, b) => (a.time || 0) - (b.time || 0)), e);
+    body = `<div class="panel">${inc || `<div class="note">Još nema događaja.</div>`}</div>` + (lines.length ? `<div class="panel"><div class="note" style="text-align:left">${lines.map(esc).join("<br>")}</div></div>` : "");
+  } else if (cur === "st") {
+    const per = (((c.stats || {}).Periods) || {}).All;
+    const groups = ((per && per.stats) || []).map(gr => ({
+      title: sr(gr.title || ""),
+      items: (gr.stats || []).filter(s => s.type !== "title" && Array.isArray(s.stats) && s.stats[0] !== null && s.stats[0] !== undefined)
+        .map(s => ({ name: sr(s.title), h: s.stats[0], a: s.stats[1] })),
+    })).filter(gr => gr.items.length);
+    body = groups.length ? `<div class="panel">${statsHtml(groups)}</div>` : `<div class="panel"><div class="note">Statistika još nije dostupna.</div></div>`;
+  } else if (cur === "lu") {
+    const lu = c.lineup;
+    body = lu ? `<div class="panel"><div class="lu"><div>${fmLineup(lu.homeTeam)}</div><div>${fmLineup(lu.awayTeam)}</div></div>${lu.lineupType === "predicted" ? `<div class="note">Očekivana postava</div>` : ""}</div>` : `<div class="panel"><div class="note">Postave još nisu objavljene.</div></div>`;
+  } else {
+    const lid = g.parentLeagueId || g.leagueId;
+    try { body = renderFmTable(await getJSON(`${FM}/leagues?id=${lid}`, 300)); }
+    catch (err) { body = `<div class="err">Tabela nije dostupna</div>`; }
+  }
+  m.innerHTML = back() + hdr(e) + `<div class="tabs">${tabs.map(([k, l]) => `<a class="chip ${k === cur ? "on" : ""}" href="#/m/fm/${id}/${k}">${l}</a>`).join("")}</div>` + body;
+  detailTimer(() => showFmMatch(id, cur), st.k === "live" ? 20 : 0);
+}
+
+async function showLeague(id) {
+  const m = $("#main");
+  m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  try {
+    const j = await getJSON(`${FM}/leagues?id=${id}`, 300);
+    const d = j.details || {};
+    const fx = ((j.fixtures || {}).allMatches || []);
+    const next = fx.filter(x => !(x.status && (x.status.finished || x.status.cancelled))).slice(0, 8);
+    const last = fx.filter(x => x.status && x.status.finished).slice(-8).reverse();
+    const row = x => { const [a, b] = scoreStr(x.status && x.status.scoreStr); const fin = x.status && x.status.finished;
+      return `<a class="ev" href="#/m/fm/${x.id}" style="grid-template-columns:70px 1fr auto"><div class="st">${fin ? "Kraj" : esc(new Date(x.status.utcTime).toLocaleDateString("sr-Latn-RS", { day: "numeric", month: "short" }) + " " + hhmm(Date.parse(x.status.utcTime)))}</div>
+      <div><div class="tm"><img src="${fmTeamLogo(x.home.id)}" alt=""><span>${esc(x.home.name)}</span></div><div class="tm"><img src="${fmTeamLogo(x.away.id)}" alt=""><span>${esc(x.away.name)}</span></div></div>
+      <div class="sc"><div>${fin ? a ?? "" : ""}</div><div>${fin ? b ?? "" : ""}</div></div></a>`; };
+    m.innerHTML = back() + `<div class="hd"><img src="${fmLeagueLogo(id)}" alt="" style="width:56px;height:56px;object-fit:contain"><div style="font-size:18px;font-weight:700;margin-top:6px">${esc(d.name || "")}</div><div class="lgn" style="margin:2px 0 0">${esc(d.selectedSeason || "")}</div></div>
+      <div style="height:12px"></div>${renderFmTable(j)}
+      ${next.length ? `<section class="lg"><h3>Naredni mečevi</h3>${next.map(row).join("")}</section>` : ""}
+      ${last.length ? `<section class="lg"><h3>Poslednji rezultati</h3>${last.map(row).join("")}</section>` : ""}`;
+  } catch (err) { m.innerHTML = back() + `<div class="err">Liga nije dostupna (${esc(err.message)})</div>`; }
+}
+
+/* ---------- detail: ESPN ---------- */
+async function showEspnMatch(path, id) {
+  const m = $("#main");
+  m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  const sport = Object.keys(ESPN).find(k => ESPN[k].includes(path)) || "nfl";
+  try {
+    if (sport === "f1" || sport === "mma") {
+      const root = await getJSON(`${ESPN_BASE}/${path}/scoreboard`, 60);
+      const ev = (root.events || []).find(x => String(x.id) === String(id));
+      if (!ev) throw new Error("događaj nije pronađen");
+      const comps = (ev.competitions || []).slice().sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+      m.innerHTML = back() + `<div class="hd"><div class="lgn">${esc((root.leagues || [])[0]?.name || "")}</div><div style="font-size:18px;font-weight:700">${esc(ev.name)}</div>${ev.circuit ? `<div class="lgn" style="margin-top:4px">${esc(ev.circuit.fullName || "")}</div>` : ""}</div><div style="height:12px"></div>` +
+        comps.map(c => {
+          const st = espnStatus(c.status);
+          const abbr = (c.type && c.type.abbreviation) || "";
+          const cs = (c.competitors || []);
+          let inner = "";
+          if (sport === "f1") inner = cs.slice().sort((a, b) => a.order - b.order).map(r => `<div><b>${r.order}</b><span>${esc(r.athlete && r.athlete.displayName)}</span><span style="color:var(--dim)">${esc(r.team && r.team.displayName || "")}</span></div>`).join("");
+          else inner = cs.map(r => `<div><span style="${r.winner ? "font-weight:700" : ""}">${esc(r.athlete && r.athlete.displayName)}</span></div>`).join(" ");
+          return `<section class="lg"><h3>${esc(sport === "f1" ? (SESSION[abbr] || abbr) : abbr)} · ${st.k === "ns" ? new Date(c.date).toLocaleString("sr-Latn-RS", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : esc(st.label || "Kraj")}</h3>${st.k !== "ns" && inner ? `<div class="race">${inner}</div>` : ""}</section>`;
+        }).join("");
+      return;
+    }
+    const j = await getJSON(`${ESPN_BASE}/${path}/summary?event=${id}`, 15);
+    const hc = ((j.header || {}).competitions || [])[0];
+    if (!hc) throw new Error("nema podataka");
+    const root = { leagues: [], events: [{ id, competitions: [hc] }] };
+    const e = espnEvents(root, sport, path, new Date())[0];
+    if (!e) throw new Error("nema podataka");
+    e.league = { name: ((j.header || {}).league || {}).name || (j.header && j.header.season && "") || sport };
+    const teams = ((j.boxscore || {}).teams) || [];
+    let stats = "";
+    if (teams.length >= 2) {
+      const homeFirst = teams[0].team && e.home && String(teams[0].team.displayName) === String(e.home.name);
+      const A = homeFirst ? teams[0] : teams[1], B = homeFirst ? teams[1] : teams[0];
+      const bm = new Map((B.statistics || []).map(s => [s.label || s.name, s.displayValue]));
+      const items = (A.statistics || []).filter(s => bm.has(s.label || s.name)).map(s => ({ name: s.label || s.name, h: s.displayValue, a: bm.get(s.label || s.name) }));
+      if (items.length) stats = `<div class="panel">${statsHtml([{ title: "Pregled", items }])}</div>`;
+    }
+    const lsH = (e.sets && e.sets[0]) || [], lsA = (e.sets && e.sets[1]) || [];
+    const venue = ((j.gameInfo || {}).venue || {}).fullName;
+    m.innerHTML = back() + hdr(e, setsRow(e)) + `<div style="height:12px"></div>` + (stats || `<div class="panel"><div class="note">Detaljna statistika nije dostupna.</div></div>`) + (venue ? `<div class="note">${esc(venue)}</div>` : "");
+    detailTimer(() => showEspnMatch(path, id), e.st.k === "live" ? 20 : 0);
+  } catch (err) { m.innerHTML = back() + `<div class="err">Događaj nije dostupan (${esc(err.message)})</div>`; }
+}
+
+/* ---------- detail: EuroLeague ---------- */
+async function showElMatch(c, code) {
+  const m = $("#main");
+  m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  try {
+    const j = await getJSON("el.json?" + Math.floor(Date.now() / 300000), 120);
+    const g = j.games.find(x => x.c === c && String(x.code) === String(code));
+    if (!g) throw new Error("utakmica nije pronađena");
+    const start = Date.parse(g.utc);
+    const e = { league: { name: j.comps[c] || c }, round: g.round, start, st: g.played ? { k: "ft", label: "Kraj" } : { k: "ns" },
+      home: { name: g.h.name, logo: g.h.logo }, away: { name: g.a.name, logo: g.a.logo },
+      hs: g.played ? g.hs : null, as: g.played ? g.as : null, sets: g.played ? [g.hp, g.ap] : null };
+    const now = Date.now();
+    if (!g.played && start <= now + 60000 && now - start < 4 * 36e5) {
+      try {
+        const h = await getJSON(`https://live.euroleague.net/api/Header?gamecode=${code}&seasoncode=${c}${j.season}`, 10);
+        const q = [1, 2, 3, 4].map(i => [num(h["ScoreQuarter" + i + "A"]), num(h["ScoreQuarter" + i + "B"])]);
+        const per = k => { let prev = 0; const o = []; for (const v of q.map(x => x[k])) { if (!v || v <= 0) break; o.push(v - prev); prev = v; } return o; };
+        if (h.Live) { const qq = String(h.Quarter || "").trim(); e.st = { k: "live", label: (/^\d+$/.test(qq) ? "Q" + qq : qq) + " " + String(h.RemainingPartialTime || "").trim() }; e.hs = num(h.ScoreA); e.as = num(h.ScoreB); e.sets = [per(0), per(1)]; }
+      } catch (err) {}
+    }
+    m.innerHTML = back() + hdr(e, setsRow(e)) + `<div class="note">Za detaljnu statistiku košarke koristi aplikaciju.</div>`;
+    detailTimer(() => showElMatch(c, code), e.st.k === "live" ? 15 : 0);
+  } catch (err) { m.innerHTML = back() + `<div class="err">Utakmica nije dostupna (${esc(err.message)})</div>`; }
+}
+
+/* ---------- routing ---------- */
+let dtimer = null;
+function detailTimer(fn, sec) {
+  clearTimeout(dtimer);
+  if (sec > 0) dtimer = setTimeout(() => { if (!document.hidden) fn(); else detailTimer(fn, sec); }, sec * 1000);
+}
+let lastScroll = 0;
+function route() {
+  clearTimeout(dtimer);
+  const h = location.hash || "#/";
+  let r;
+  if ((r = /^#\/m\/fm\/(\d+)(?:\/(\w+))?$/.exec(h))) showFmMatch(r[1], r[2]);
+  else if ((r = /^#\/m\/espn\/(.+)\/(\d+)$/.exec(h))) showEspnMatch(r[1], r[2]);
+  else if ((r = /^#\/m\/el\/(\w+)\/(\d+)$/.exec(h))) showElMatch(r[1], r[2]);
+  else if ((r = /^#\/l\/(\d+)$/.exec(h))) showLeague(r[1]);
+  else { renderList(); window.scrollTo(0, lastScroll); return; }
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", route);
+window.addEventListener("scroll", () => { if (!location.hash || location.hash === "#/") lastScroll = window.scrollY; }, { passive: true });
+
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("[data-sp],[data-d],[data-live]");
+  if (b) {
+    if (b.dataset.sp) { state.sport = b.dataset.sp; try { localStorage.setItem("ks.sport", state.sport); } catch (e) {} state.events = []; }
+    if (b.dataset.d !== undefined) { const n = +b.dataset.d; state.date = n === 0 ? new Date() : new Date(state.date.getTime() + n * 864e5); state.events = []; }
+    if (b.dataset.live) { state.liveOnly = !state.liveOnly; renderList(); return; }
+    if (location.hash && location.hash !== "#/") { location.hash = "#/"; }
+    lastScroll = 0;
+    refresh(false);
+    return;
+  }
+});
+
+setInterval(() => {
+  if (document.hidden) return;
+  if (location.hash && location.hash !== "#/") return;
+  const live = state.events.some(e => e.st.k === "live");
+  if (sameDay(state.date, new Date()) && (live || Date.now() - (refresh.last || 0) > 60000)) { refresh.last = Date.now(); refresh(true); }
+}, 20000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden && (!location.hash || location.hash === "#/")) refresh(true); });
+
+renderChrome();
+route();
+refresh(false);
+</script>
+</body>
+</html>
