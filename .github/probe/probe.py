@@ -1,35 +1,39 @@
 #!/usr/bin/env python3
-import json, os, sys, urllib.request, datetime
+"""CORS probe: can a static page on github.io call these APIs straight from the browser?"""
+import os, sys, urllib.request, urllib.error, datetime
 OUT = sys.argv[1]
 os.makedirs(OUT, exist_ok=True)
-UA = {"User-Agent": "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/129 Mobile Safari/537.36", "Accept": "application/json"}
-log = open(os.path.join(OUT, "index.txt"), "w")
-def get(name, url, headers=None):
-    h = dict(UA); h.update(headers or {})
-    try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=25) as r:
-            body = r.read(); code = r.status
-    except urllib.error.HTTPError as e:
-        body = e.read(); code = e.code
-    except Exception as e:
-        log.write(f"ERR  {name} {url} {e}\n"); return None
-    open(os.path.join(OUT, name + ".json"), "wb").write(body)
-    log.write(f"{code}  {len(body):>8}  {name}  {url}\n")
-    try: return json.loads(body)
-    except Exception: return None
+ORIGIN = "https://ludwize.github.io"
+UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/129 Safari/537.36"
+d = datetime.date.today().strftime("%Y%m%d")
 F = "https://www.fotmob.com/api/data"
 L = "https://prod-cdn-public-api.livescore.com/v1/api/app"
-get("fm_heat", f"{F}/heatmap/match/6106333/heatmaps?heatmapUrl=https%3A%2F%2Fpub.fotmob.com%2Fprod%2Fdb%2Fapi%2Fheatmap%2Fmatch%2F6106333")
-get("fm_heat_pub", "https://pub.fotmob.com/prod/db/api/heatmap/match/6106333")
-get("fm_table", "https://data.fotmob.com/tables.ext.943230.fot.gz")
-get("fm_today", f"{F}/matches?date={datetime.date.today().strftime('%Y%m%d')}&timezone=Europe%2FBelgrade&ccode3=SRB")
-get("fm_stats_goals", "https://data.fotmob.com/stats/182/season/1000000451/goals.json")
-get("fm_league182_2025", f"{F}/leagues?id=182&season=2025%2F2026")
-get("ls_sb_tennis", f"{L}/date/tennis/20261020/2?countryCode=RS&locale=en&MD=1")
-get("ls_live_all_soccer", f"{L}/live/soccer/2?countryCode=RS&locale=en&MD=1")
-get("logo_fm", "https://images.fotmob.com/image_resources/logo/teamlogo/7998_small.png")
-get("logo_fm_league", "https://images.fotmob.com/image_resources/logo/leaguelogo/182.png")
-get("logo_ls", "https://lsm-static-prod.livescore.com/medium/enet/58542.png")
-get("logo_el", "https://media-cdn.incrowdsports.com/23610a1b-1c2e-4d2a-8fe4-ac2f8e400632.png")
+E = "https://site.api.espn.com/apis/site/v2/sports"
+URLS = {
+    "fotmob_matches": f"{F}/matches?date={d}&timezone=Europe%2FBelgrade&ccode3=SRB",
+    "fotmob_img": "https://images.fotmob.com/image_resources/logo/teamlogo/7998_small.png",
+    "fotmob_data": "https://data.fotmob.com/tables.ext.943230.fot.gz",
+    "livescore_date": f"{L}/date/soccer/{d}/2?countryCode=RS&locale=en&MD=1",
+    "livescore_img": "https://lsm-static-prod.livescore.com/medium/enet/58542.png",
+    "espn_nba": f"{E}/basketball/nba/scoreboard",
+    "espn_nhl": f"{E}/hockey/nhl/scoreboard",
+    "euroleague_v2": "https://api-live.euroleague.net/v2/competitions/E/seasons/E2026/games",
+    "euroleague_live": "https://live.euroleague.net/api/Header?gamecode=1&seasoncode=E2026",
+}
+log = open(os.path.join(OUT, "index.txt"), "w")
+for name, url in URLS.items():
+    out = {}
+    for method in ("GET", "OPTIONS"):
+        h = {"User-Agent": UA, "Origin": ORIGIN, "Accept": "application/json"}
+        if method == "OPTIONS":
+            h["Access-Control-Request-Method"] = "GET"
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=h, method=method), timeout=25) as r:
+                out[method] = (r.status, r.headers.get("access-control-allow-origin"), len(r.read()))
+        except urllib.error.HTTPError as e:
+            out[method] = (e.code, e.headers.get("access-control-allow-origin"), len(e.read()))
+        except Exception as e:
+            out[method] = ("ERR", str(e)[:60], 0)
+    log.write(f"{name:16} GET {out['GET']}  OPTIONS {out['OPTIONS']}\n  {url}\n")
 log.close()
 print(open(os.path.join(OUT, "index.txt")).read())
