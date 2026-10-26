@@ -1,12 +1,18 @@
-200     68985  fm_heat  https://www.fotmob.com/api/data/heatmap/match/6106333/heatmaps?heatmapUrl=https%3A%2F%2Fpub.fotmob.com%2Fprod%2Fdb%2Fapi%2Fheatmap%2Fmatch%2F6106333
-400         0  fm_heat_pub  https://pub.fotmob.com/prod/db/api/heatmap/match/6106333
-200      1208  fm_table  https://data.fotmob.com/tables.ext.943230.fot.gz
-200     76270  fm_today  https://www.fotmob.com/api/data/matches?date=20261021&timezone=Europe%2FBelgrade&ccode3=SRB
-200      4619  fm_stats_goals  https://data.fotmob.com/stats/182/season/1000000451/goals.json
-200    707009  fm_league182_2025  https://www.fotmob.com/api/data/leagues?id=182&season=2025%2F2026
-200     75485  ls_sb_tennis  https://prod-cdn-public-api.livescore.com/v1/api/app/date/tennis/20261020/2?countryCode=RS&locale=en&MD=1
-200      2419  ls_live_all_soccer  https://prod-cdn-public-api.livescore.com/v1/api/app/live/soccer/2?countryCode=RS&locale=en&MD=1
-200      9332  logo_fm  https://images.fotmob.com/image_resources/logo/teamlogo/7998_small.png
-200      8978  logo_fm_league  https://images.fotmob.com/image_resources/logo/leaguelogo/182.png
-200      2804  logo_ls  https://lsm-static-prod.livescore.com/medium/enet/58542.png
-403       243  logo_el  https://media-cdn.incrowdsports.com/23610a1b-1c2e-4d2a-8fe4-ac2f8e400632.png
+fotmob_matches   GET (200, '*', 68628)  OPTIONS (200, '*', 0)
+  https://www.fotmob.com/api/data/matches?date=20261026&timezone=Europe%2FBelgrade&ccode3=SRB
+fotmob_img       GET (200, None, 9332)  OPTIONS (403, None, 1053)
+  https://images.fotmob.com/image_resources/logo/teamlogo/7998_small.png
+fotmob_data      GET (200, '*', 1202)  OPTIONS (200, '*', 0)
+  https://data.fotmob.com/tables.ext.943230.fot.gz
+livescore_date   GET (403, None, 20)  OPTIONS (403, None, 20)
+  https://prod-cdn-public-api.livescore.com/v1/api/app/date/soccer/20261026/2?countryCode=RS&locale=en&MD=1
+livescore_img    GET (200, None, 2804)  OPTIONS (200, None, 0)
+  https://lsm-static-prod.livescore.com/medium/enet/58542.png
+espn_nba         GET (200, '*', 167957)  OPTIONS (403, None, 20)
+  https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard
+espn_nhl         GET (200, '*', 148949)  OPTIONS (403, None, 20)
+  https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard
+euroleague_v2    GET (200, None, 718292)  OPTIONS (204, '*', 0)
+  https://api-live.euroleague.net/v2/competitions/E/seasons/E2026/games
+euroleague_live  GET (200, '*', 933)  OPTIONS (200, '*', 0)
+  https://live.euroleague.net/api/Header?gamecode=1&seasoncode=E2026
