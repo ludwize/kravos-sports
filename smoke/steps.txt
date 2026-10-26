@@ -2,29 +2,29 @@ shot 01-scores
 shot 02-scores-scroll
 tapped UTO
 shot 03-yesterday
-tapped Kraj
+not found: Kraj
 shot 10-match
 shot 11-match-scroll
 shot 12-match-scroll2
-tapped Statistika
+not found: Statistika
 shot 13-stats
-tapped Postave
+not found: Postave
 shot 14-lineups
 shot 15-lineups-scroll
-tapped Heatmapa
+not found: Heatmapa
 shot 16-heat
 shot 17-heat-scroll
 shot 18-heat-scroll2
-tapped Šutevi
+not found: Šutevi
 shot 185-shots
-tapped Tabela
+not found: Tabela
 shot 19-table
-tapped Međusobni
+not found: Međusobni
 shot 20-h2h
 not found: UŽIVO
 shot 21-live
 not found: UŽIVO
-tapped Košarka
+not found: Košarka
 shot 30-basketball
 not found: Kraj
 shot 31-bb-match
