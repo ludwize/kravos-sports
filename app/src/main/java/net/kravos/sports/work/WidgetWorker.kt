@@ -27,14 +27,27 @@ class WidgetWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         val teams = app.prefs.teams.value
         if (teams.isEmpty()) { WidgetData.save(applicationContext, emptyList()); ScoresWidget.update(applicationContext); return Result.success() }
         return try {
+            val now = System.currentTimeMillis() / 1000
             val evs = coroutineScope {
-                teams.map { t -> async { app.repo.teamEvents(t.key) } }
+                val base = teams.map { t -> async { app.repo.teamEvents(t.key) } }
                     .awaitAll().flatten().distinctBy { it.key }
+                // Team pages lag behind (and EuroLeague schedules never carry live state), so any match
+                // that should be running right now is re-read from its live match endpoint.
+                base.map { e ->
+                    async {
+                        val running = !e.status.finished && e.start in 1..(now + 60) && now - e.start < 4 * 3600
+                        if (!running) e
+                        else runCatching { app.repo.match(e.key, live = true).event }.getOrNull()
+                            ?.let { f -> f.copy(home = e.home, away = e.away, tournament = e.tournament ?: f.tournament) } ?: e
+                    }
+                }.awaitAll()
             }
             val items = WidgetData.pick(evs, teams.map { it.key }.toSet())
             WidgetData.save(applicationContext, items)
             ScoresWidget.update(applicationContext)
-            if (items.any { it.live }) scheduleSoon(applicationContext)
+            // keep polling while something is live or about to start (kick-off within 15 min / in its usual window)
+            val hot = items.any { it.live } || evs.any { !it.status.finished && it.start in 1..(now + 15 * 60) && now - it.start < 4 * 3600 }
+            if (hot) scheduleSoon(applicationContext)
             Result.success()
         } catch (e: Exception) {
             Log.w(Http.TAG, "widget refresh failed: ${e.message}")
@@ -55,9 +68,11 @@ class WidgetWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx
         }
 
         private fun scheduleSoon(ctx: Context) {
-            val req = OneTimeWorkRequestBuilder<WidgetWorker>().setInitialDelay(3, TimeUnit.MINUTES)
+            val req = OneTimeWorkRequestBuilder<WidgetWorker>().setInitialDelay(2, TimeUnit.MINUTES)
                 .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build()
-            WorkManager.getInstance(ctx).enqueueUniqueWork("widget-live", ExistingWorkPolicy.KEEP, req)
+            // APPEND_OR_REPLACE: when this runs inside the "widget-live" job itself, KEEP would see the
+            // still-running job and silently drop the next one, ending live polling after one round.
+            WorkManager.getInstance(ctx).enqueueUniqueWork("widget-live", ExistingWorkPolicy.APPEND_OR_REPLACE, req)
         }
     }
 }
