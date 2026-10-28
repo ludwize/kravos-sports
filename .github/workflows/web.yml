@@ -1,24 +1,54 @@
 name: web
 
+# GitHub's own cron skips most runs on free repos (every 4-6 h was seen instead of 10 min),
+# so each run schedules the next one itself: after publishing it waits ~5 min and dispatches
+# web.yml again ("chain"). The cron below only restarts the chain if it ever breaks.
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '7,37 * * * *'
   push:
     branches: [main]
     paths: ['web/**', '.github/workflows/web.yml']
   workflow_dispatch:
+    inputs:
+      chain:
+        description: 'started by the previous run (internal)'
+        required: false
+        default: 'false'
 
 permissions:
   contents: read
   pages: write
   id-token: write
+  actions: write
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
+  guard:
+    # a cron run is only a backup: skip it when the chain is alive (a web run started in the last 15 min)
+    runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.g.outputs.skip }}
+    steps:
+      - id: g
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          skip=false
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            since=$(date -u -d '15 minutes ago' +%Y-%m-%dT%H:%M:%SZ)
+            n=$(gh api "repos/${{ github.repository }}/actions/workflows/web.yml/runs?per_page=20" \
+                --jq "[.workflow_runs[] | select(.id != ${{ github.run_id }} and .created_at > \"$since\")] | length")
+            [ "$n" -gt 0 ] && skip=true
+          fi
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"; echo "skip=$skip"
+
   publish:
+    needs: guard
+    if: needs.guard.outputs.skip != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
@@ -38,3 +68,19 @@ jobs:
           path: site
       - id: deploy
         uses: actions/deploy-pages@v4
+
+  next:
+    # schedule the next refresh ~6 min after this one started
+    needs: [guard, publish]
+    if: always() && needs.guard.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sleep 300
+          others=$(gh api "repos/${{ github.repository }}/actions/workflows/web.yml/runs?per_page=20" \
+            --jq '[.workflow_runs[] | select(.id != ${{ github.run_id }} and (.status == "queued" or .status == "in_progress" or .status == "waiting" or .status == "pending" or .status == "requested"))] | length')
+          if [ "$others" -gt 0 ]; then echo "another run is already queued; not chaining"; exit 0; fi
+          gh workflow run web.yml --repo "${{ github.repository }}" --ref main -f chain=true
