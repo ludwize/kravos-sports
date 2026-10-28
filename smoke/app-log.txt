@@ -1,191 +1,208 @@
-130:10-26 15:16:40.506   521   881 V SplashScreenExceptionList: SplashScreen checking exception for package net.kravos.sports (target sdk:35) -> false
-146:10-26 15:16:40.566   521   881 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=net.kravos.sports/.ui.MainActivity} with LAUNCH_SINGLE_TOP from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
-164:10-26 15:16:40.644   521   824 D CoreBackPreview: Window{3c72f00 u0 Splash Screen net.kravos.sports}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@c585ca9, mPriority=0, mIsAnimationCallback=false}
-349:10-26 15:16:40.979   521   553 I ActivityManager: Start proc 2680:net.kravos.sports/u0a192 for next-top-activity {net.kravos.sports/net.kravos.sports.ui.MainActivity}
-665:10-26 15:16:41.873   521   540 V WindowManager:     info={id=5 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{379dc85 Task{3751ee9 #8 type=standard A=10192:net.kravos.sports}}} m=OPEN f=MOVE_TO_TOP leash=Surface(name=Task=8)/@0x55c4fce sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0},{WCT{RemoteToken{ff19ada Task{605e304 #1 type=home}}} m=TO_BACK f=NONE leash=Surface(name=Task=1)/@0x3afe409 sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0}]}
-884:10-26 15:16:42.338  2680  2680 D nativeloader: Configuring clns-6 for other apk /data/app/~~6PLyGhtWqkDaV8BQXJ42dw==/net.kravos.sports-5Gvd-z6XoQkMBUlKjabvmg==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~6PLyGhtWqkDaV8BQXJ42dw==/net.kravos.sports-5Gvd-z6XoQkMBUlKjabvmg==/lib/x86_64:/data/app/~~6PLyGhtWqkDaV8BQXJ42dw==/net.kravos.sports-5Gvd-z6XoQkMBUlKjabvmg==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/net.kravos.sports
-955:10-26 15:16:42.418  2680  2680 V GraphicsEnvironment: ANGLE GameManagerService for net.kravos.sports: false
-956:10-26 15:16:42.418  2680  2680 V GraphicsEnvironment: net.kravos.sports is not listed in per-application setting
-961:10-26 15:16:42.427   521   806 I SdkSandboxManager: No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10192, mPackageName='net.kravos.sports, mAppProcessToken='null'}
-1025:10-26 15:16:42.597   521  1759 E JobScheduler.JobStatus: App net.kravos.sports became active but still in NEVER bucket
-1106:10-26 15:16:42.793   521  2579 D ConnectivityService: requestNetwork for uid/pid:10192/2680 activeRequest: null callbackRequest: 66 [NetworkRequest [ REQUEST id=67, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: net.kravos.sports UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
-1108:10-26 15:16:42.794   521   758 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=67, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: net.kravos.sports UnderlyingNetworks: Null] ]
-1109:10-26 15:16:42.794   521   758 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=67, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: net.kravos.sports UnderlyingNetworks: Null] ]
-1110:10-26 15:16:42.794   521   758 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=67, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: net.kravos.sports UnderlyingNetworks: Null] ]
-1111:10-26 15:16:42.794   521   758 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=67, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: net.kravos.sports UnderlyingNetworks: Null] ]
-1209:10-26 15:16:43.015   521  1776 E JobScheduler.JobStatus: App net.kravos.sports became active but still in NEVER bucket
-1212:10-26 15:16:43.017   521   534 W InputManager-JNI: Input channel object 'a871246 net.kravos.sports/net.kravos.sports.ui.MainActivity (client)' was disposed without first being removed with the input manager!
-1264:10-26 15:16:43.163   521  2738 D CoreBackPreview: Window{bd81cf9 u0 net.kravos.sports/net.kravos.sports.ui.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@1807e08, mPriority=0, mIsAnimationCallback=false}
-1478:10-26 15:16:43.556  1101  1137 I Launcher.IconCache: Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{net.kravos.sports/net.kravos.sports.ui.MainActivity}
-1884:10-26 15:16:44.663   521  1762 I WindowManager: finishDrawing of relaunch: Window{bd81cf9 u0 net.kravos.sports/net.kravos.sports.ui.MainActivity} 2490ms
-1921:10-26 15:16:44.741  1051  1051 D CarrierSvcBindHelper: onPackageAdded: net.kravos.sports
-1929:10-26 15:16:44.750   521  1770 D CoreBackPreview: Window{3c72f00 u0 Splash Screen net.kravos.sports EXITING}: Setting back callback null
-1932:10-26 15:16:44.750   521   819 W InputManager-JNI: Input channel object '3c72f00 Splash Screen net.kravos.sports (client)' was disposed without first being removed with the input manager!
-2025:10-26 15:16:44.800   521   540 I ActivityTaskManager: Displayed net.kravos.sports/.ui.MainActivity for user 0: +4s208ms
-2068:10-26 15:16:44.846  2680  2680 D WM-WorkerWrapper: Starting work for net.kravos.sports.work.WidgetWorker
-2069:10-26 15:16:44.846  2680  2680 D WM-WorkerWrapper: Starting work for net.kravos.sports.work.WidgetWorker
-2103:10-26 15:16:44.885   521   534 I ImeTracker: net.kravos.sports:d34607e1: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_UNSPECIFIED_WINDOW
-2105:10-26 15:16:44.896   521   534 I ImeTracker: net.kravos.sports:d34607e1: onCancelled at PHASE_SERVER_SHOULD_HIDE
-2119:10-26 15:16:44.928  1558  1558 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=net.kravos.sports fieldId=0 fieldName=null extras=null}, false)
-2260:10-26 15:16:45.244  2680  2819 I WM-WorkerWrapper: Worker result SUCCESS for Work [ id=33ac1510-ca10-47cc-9a03-9e7fc6fb2984, tags={ net.kravos.sports.work.WidgetWorker } ]
-2350:10-26 15:16:45.370   849   849 I SafetyLabelChangedBroadcastReceiver: received broadcast packageName: net.kravos.sports, current user: UserHandle{0}, packageChangeEvent: NEW_INSTALL, intent user: UserHandle{0}
-2412:10-26 15:16:45.466   521   551 D AppWidgetServiceImpl: Provider info from ComponentInfo{net.kravos.sports/net.kravos.sports.widget.ScoresWidgetReceiver} won't be persisted.
-2417:10-26 15:16:45.482   521  2738 E JobScheduler.JobStatus: App net.kravos.sports became active but still in NEVER bucket
-2479:10-26 15:16:45.517  2680  2797 I WM-WorkerWrapper: Worker result SUCCESS for Work [ id=58dd44f7-f927-4a79-a482-ae4048d5fffd, tags={ net.kravos.sports.work.WidgetWorker } ]
-2555:10-26 15:16:45.647   521   521 W JobScheduler: Job didn't exist in JobStore: ec41c0 {androidx.work.systemjobscheduler} #u0a192/0 @androidx.work.systemjobscheduler@net.kravos.sports/androidx.work.impl.background.systemjob.SystemJobService
-2574:10-26 15:16:45.662  2680  3031 I KravosSports: GET https://www.fotmob.com/api/data/matches?date=20261026&timezone=Europe%2FBelgrade&ccode3=SRB -> 200 (69764 b)
-2656:10-26 15:16:45.797   521   551 D AppWidgetServiceImpl: Provider info from ComponentInfo{net.kravos.sports/net.kravos.sports.widget.ScoresWidgetReceiver} won't be persisted.
-2681:10-26 15:16:45.836   521   521 W JobScheduler: Job didn't exist in JobStore: 4e6642a {androidx.work.systemjobscheduler} #u0a192/1 @androidx.work.systemjobscheduler@net.kravos.sports/androidx.work.impl.background.systemjob.SystemJobService
-3972:10-26 15:16:48.204  1051  1271 D ImsResolver: maybeAddedImsService, packageName: net.kravos.sports
-3976:10-26 15:16:48.206  2680  3426 D ProfileInstaller: Installing profile for net.kravos.sports
-4193:10-26 15:16:48.726  1101  1137 I Launcher.IconCache: Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{net.kravos.sports/net.kravos.sports.ui.MainActivity}
-4240:10-26 15:16:48.822  1051  1051 D CarrierSvcBindHelper: onPackageModified: net.kravos.sports
-4244:10-26 15:16:48.834  1051  1271 D ImsResolver: maybeAddedImsService, packageName: net.kravos.sports
-4339:10-26 15:16:48.966  1051  1051 D CarrierSvcBindHelper: onPackageModified: net.kravos.sports
-4381:10-26 15:16:49.098  1051  1271 D ImsResolver: maybeAddedImsService, packageName: net.kravos.sports
-4430:10-26 15:16:49.224  2680  2680 D WM-RescheduleReceiver: Received intent Intent { act=android.intent.action.BOOT_COMPLETED flg=0x89000010 cmp=net.kravos.sports/androidx.work.impl.background.systemalarm.RescheduleReceiver (has extras) }
-4491:10-26 15:16:49.393  1675  1675 I AiAiEcho: AppFetcherImplV2 updateApps package:[net.kravos.sports], userId:[0], reason:[package is added.].
-5839:10-26 15:16:52.634  1425  3667 I FontLog : Package net.kravos.sports has no metadata [CONTEXT service_id=132 ]
-6583:10-26 15:16:53.819  1472  3532 I BlockstoreStorage: Clearing Blockstore Data for package net.kravos.sports [CONTEXT service_id=258 ]
-7499:10-26 15:16:55.427  1675  1675 I AiAiEcho: AppFetcherImpl onPackageChanged net.kravos.sports.
-7500:10-26 15:16:55.428  1675  2492 I AiAiEcho: AppIndexer Package:[net.kravos.sports] UserProfile:[0] Enabled:[true].
-7501:10-26 15:16:55.428  1675  2492 I AiAiEcho: AppFetcherImplV2 updateApps package:[net.kravos.sports], userId:[0], reason:[package is updated.].
-7654:10-26 15:16:55.766  1675  1675 I AiAiEcho: AppFetcherImpl onPackageChanged net.kravos.sports.
-7658:10-26 15:16:55.767  1675  3100 I AiAiEcho: AppIndexer Package:[net.kravos.sports] UserProfile:[0] Enabled:[true].
-7659:10-26 15:16:55.767  1675  3100 I AiAiEcho: AppFetcherImplV2 updateApps package:[net.kravos.sports], userId:[0], reason:[package is updated.].
-10256:10-26 15:17:00.911  2680  3178 I KravosSports: GET https://www.fotmob.com/api/data/matches?date=20261026&timezone=Europe%2FBelgrade&ccode3=SRB -> 200 (69764 b)
-18344:10-26 15:17:13.152  4699  4699 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-18345:10-26 15:17:13.178  4699  4699 I AndroidRuntime: Using default boot image
-18346:10-26 15:17:13.178  4699  4699 I AndroidRuntime: Leaving lock profiling enabled
-18360:10-26 15:17:13.401  4699  4699 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-18417:10-26 15:17:14.507  4699  4699 D AndroidRuntime: Shutting down VM
-18621:10-26 15:17:15.911  2680  3177 I KravosSports: GET https://www.fotmob.com/api/data/matches?date=20261027&timezone=Europe%2FBelgrade&ccode3=SRB -> 200 (116770 b)
-22950:10-26 15:17:25.466  5054  5054 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-22953:10-26 15:17:25.490  5054  5054 I AndroidRuntime: Using default boot image
-22954:10-26 15:17:25.491  5054  5054 I AndroidRuntime: Leaving lock profiling enabled
-23131:10-26 15:17:25.952  5054  5054 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-23751:10-26 15:17:27.077  5054  5054 D AndroidRuntime: Shutting down VM
-35050:10-26 15:17:42.581  5348  5348 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-35060:10-26 15:17:42.592  5348  5348 I AndroidRuntime: Using default boot image
-35061:10-26 15:17:42.592  5348  5348 I AndroidRuntime: Leaving lock profiling enabled
-35159:10-26 15:17:42.789  5348  5348 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-35775:10-26 15:17:43.859  5348  5348 D AndroidRuntime: Shutting down VM
-37273:10-26 15:17:52.151  5740  5740 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-37275:10-26 15:17:52.163  5740  5740 I AndroidRuntime: Using default boot image
-37276:10-26 15:17:52.163  5740  5740 I AndroidRuntime: Leaving lock profiling enabled
-37310:10-26 15:17:52.324  5740  5740 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-37704:10-26 15:17:53.413  5740  5740 D AndroidRuntime: Shutting down VM
-44050:10-26 15:18:04.559  5914  5914 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-44051:10-26 15:18:04.566  5914  5914 I AndroidRuntime: Using default boot image
-44052:10-26 15:18:04.567  5914  5914 I AndroidRuntime: Leaving lock profiling enabled
-44065:10-26 15:18:04.786  5914  5914 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-44145:10-26 15:18:05.849  5914  5914 D AndroidRuntime: Shutting down VM
-44380:10-26 15:18:26.991  5980  5980 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-44381:10-26 15:18:26.997  5980  5980 I AndroidRuntime: Using default boot image
-44382:10-26 15:18:26.997  5980  5980 I AndroidRuntime: Leaving lock profiling enabled
-44395:10-26 15:18:27.130  5980  5980 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-44458:10-26 15:18:28.173  5980  5980 D AndroidRuntime: Shutting down VM
-44540:10-26 15:18:36.226  6002  6002 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-44541:10-26 15:18:36.230  6002  6002 I AndroidRuntime: Using default boot image
-44542:10-26 15:18:36.230  6002  6002 I AndroidRuntime: Leaving lock profiling enabled
-44555:10-26 15:18:36.308  6002  6002 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-44615:10-26 15:18:37.345  6002  6002 D AndroidRuntime: Shutting down VM
-45302:10-26 15:18:45.509  6059  6059 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-45303:10-26 15:18:45.513  6059  6059 I AndroidRuntime: Using default boot image
-45304:10-26 15:18:45.513  6059  6059 I AndroidRuntime: Leaving lock profiling enabled
-45386:10-26 15:18:45.691  6059  6059 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-45597:10-26 15:18:46.755  6059  6059 D AndroidRuntime: Shutting down VM
-45920:10-26 15:18:55.754   835   868 V WindowManagerShell: Transition requested: android.os.BinderProxy@606e1b9 TransitionRequestInfo { type = CLOSE, triggerTask = TaskInfo{userId=0 taskId=8 displayId=0 isRunning=false baseIntent=Intent { flg=0x10000000 cmp=net.kravos.sports/.ui.MainActivity } baseActivity=null topActivity=null origActivity=null realActivity=ComponentInfo{net.kravos.sports/net.kravos.sports.ui.MainActivity} numActivities=0 lastActiveTime=40961 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@7caa9fe} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=null launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=true isVisibleRequested=true isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
-46098:10-26 15:18:56.735   521   540 V WindowManager: Sent Transition #6 createdAt=10-26 15:18:55.751 via request=TransitionRequestInfo { type = CLOSE, triggerTask = TaskInfo{userId=0 taskId=8 displayId=0 isRunning=false baseIntent=Intent { flg=0x10000000 cmp=net.kravos.sports/.ui.MainActivity } baseActivity=null topActivity=null origActivity=null realActivity=ComponentInfo{net.kravos.sports/net.kravos.sports.ui.MainActivity} numActivities=0 lastActiveTime=40961 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{379dc85 Task{3751ee9 #8 type=standard A=10192:net.kravos.sports}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=null launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=true isVisibleRequested=true isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
-46100:10-26 15:18:56.735   521   540 V WindowManager:     info={id=6 t=CLOSE f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{ff19ada Task{605e304 #1 type=home}}} m=TO_FRONT f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x3afe409 sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0},{WCT{RemoteToken{379dc85 Task{3751ee9 #8 type=standard A=10192:net.kravos.sports}}} m=CLOSE f=NONE leash=Surface(name=Task=8)/@0x55c4fce sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{d1d91aa token=android.os.Binder@db32c95})/@0x7ab12b1 sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0}]}
-46143:10-26 15:18:57.257   521  1760 D CoreBackPreview: Window{bd81cf9 u0 net.kravos.sports/net.kravos.sports.ui.MainActivity}: Setting back callback null
-46144:10-26 15:18:57.258   521  1760 W InputManager-JNI: Input channel object 'bd81cf9 net.kravos.sports/net.kravos.sports.ui.MainActivity (client)' was disposed without first being removed with the input manager!
-46145:10-26 15:18:57.263  2680  2680 D WM-WorkerWrapper: Starting work for net.kravos.sports.work.WidgetWorker
-46169:10-26 15:18:57.358  2680  2819 I WM-WorkerWrapper: Worker result SUCCESS for Work [ id=1f29fd79-8b37-4979-b321-cd7bd32286be, tags={ net.kravos.sports.work.WidgetWorker } ]
-46173:10-26 15:18:57.361   521  1760 W JobScheduler: Job didn't exist in JobStore: 6a0760f {androidx.work.systemjobscheduler} #u0a192/3 @androidx.work.systemjobscheduler@net.kravos.sports/androidx.work.impl.background.systemjob.SystemJobService
-46195:10-26 15:18:57.882  6151  6151 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-46196:10-26 15:18:57.889  6151  6151 I AndroidRuntime: Using default boot image
-46197:10-26 15:18:57.889  6151  6151 I AndroidRuntime: Leaving lock profiling enabled
-46239:10-26 15:18:58.024  6151  6151 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-46476:10-26 15:18:59.636  6151  6151 D AndroidRuntime: Shutting down VM
-46594:10-26 15:19:07.365   521   612 D ActivityManager: freezing 2680 net.kravos.sports
-46624:10-26 15:19:09.777  6195  6195 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-46625:10-26 15:19:09.780  6195  6195 I AndroidRuntime: Using default boot image
-46626:10-26 15:19:09.780  6195  6195 I AndroidRuntime: Leaving lock profiling enabled
-46639:10-26 15:19:09.860  6195  6195 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-46702:10-26 15:19:10.888  6195  6195 D AndroidRuntime: Shutting down VM
-46772:10-26 15:19:16.809  6213  6213 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-46773:10-26 15:19:16.813  6213  6213 I AndroidRuntime: Using default boot image
-46774:10-26 15:19:16.813  6213  6213 I AndroidRuntime: Leaving lock profiling enabled
-46788:10-26 15:19:16.896  6213  6213 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-46835:10-26 15:19:17.917  6213  6213 D AndroidRuntime: Shutting down VM
-46921:10-26 15:19:28.052  6234  6234 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-46922:10-26 15:19:28.056  6234  6234 I AndroidRuntime: Using default boot image
-46923:10-26 15:19:28.056  6234  6234 I AndroidRuntime: Leaving lock profiling enabled
-46936:10-26 15:19:28.133  6234  6234 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-46990:10-26 15:19:29.149  6234  6234 D AndroidRuntime: Shutting down VM
-47088:10-26 15:19:39.286  6263  6263 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-47089:10-26 15:19:39.290  6263  6263 I AndroidRuntime: Using default boot image
-47090:10-26 15:19:39.290  6263  6263 I AndroidRuntime: Leaving lock profiling enabled
-47103:10-26 15:19:39.367  6263  6263 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-47155:10-26 15:19:40.388  6263  6263 D AndroidRuntime: Shutting down VM
-47352:10-26 15:19:50.550  6304  6304 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-47353:10-26 15:19:50.554  6304  6304 I AndroidRuntime: Using default boot image
-47354:10-26 15:19:50.554  6304  6304 I AndroidRuntime: Leaving lock profiling enabled
-47367:10-26 15:19:50.634  6304  6304 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-47430:10-26 15:19:51.661  6304  6304 D AndroidRuntime: Shutting down VM
-47515:10-26 15:20:01.802  6333  6333 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-47516:10-26 15:20:01.806  6333  6333 I AndroidRuntime: Using default boot image
-47517:10-26 15:20:01.806  6333  6333 I AndroidRuntime: Leaving lock profiling enabled
-47530:10-26 15:20:01.885  6333  6333 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-47585:10-26 15:20:02.918  6333  6333 D AndroidRuntime: Shutting down VM
-47699:10-26 15:20:13.061  6356  6356 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-47700:10-26 15:20:13.065  6356  6356 I AndroidRuntime: Using default boot image
-47701:10-26 15:20:13.065  6356  6356 I AndroidRuntime: Leaving lock profiling enabled
-47714:10-26 15:20:13.143  6356  6356 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-47762:10-26 15:20:14.169  6356  6356 D AndroidRuntime: Shutting down VM
-47884:10-26 15:20:22.090  6375  6375 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-47885:10-26 15:20:22.094  6375  6375 I AndroidRuntime: Using default boot image
-47886:10-26 15:20:22.094  6375  6375 I AndroidRuntime: Leaving lock profiling enabled
-47899:10-26 15:20:22.171  6375  6375 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-47956:10-26 15:20:23.195  6375  6375 D AndroidRuntime: Shutting down VM
-48028:10-26 15:20:32.346  6396  6396 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-48029:10-26 15:20:32.350  6396  6396 I AndroidRuntime: Using default boot image
-48030:10-26 15:20:32.350  6396  6396 I AndroidRuntime: Leaving lock profiling enabled
-48043:10-26 15:20:32.428  6396  6396 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-48103:10-26 15:20:33.458  6396  6396 D AndroidRuntime: Shutting down VM
-48191:10-26 15:20:43.615  6432  6432 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-48192:10-26 15:20:43.618  6432  6432 I AndroidRuntime: Using default boot image
-48193:10-26 15:20:43.618  6432  6432 I AndroidRuntime: Leaving lock profiling enabled
-48206:10-26 15:20:43.697  6432  6432 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-48261:10-26 15:20:44.726  6432  6432 D AndroidRuntime: Shutting down VM
-48348:10-26 15:20:56.903  6460  6460 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-48349:10-26 15:20:56.907  6460  6460 I AndroidRuntime: Using default boot image
-48350:10-26 15:20:56.907  6460  6460 I AndroidRuntime: Leaving lock profiling enabled
-48363:10-26 15:20:56.988  6460  6460 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-48418:10-26 15:20:58.009  6460  6460 D AndroidRuntime: Shutting down VM
-48496:10-26 15:21:03.942  6479  6479 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-48497:10-26 15:21:03.946  6479  6479 I AndroidRuntime: Using default boot image
-48498:10-26 15:21:03.946  6479  6479 I AndroidRuntime: Leaving lock profiling enabled
-48512:10-26 15:21:04.032  6479  6479 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-48617:10-26 15:21:05.064  6479  6479 D AndroidRuntime: Shutting down VM
-50313:10-26 15:21:17.256  6567  6567 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-50314:10-26 15:21:17.259  6567  6567 I AndroidRuntime: Using default boot image
-50315:10-26 15:21:17.259  6567  6567 I AndroidRuntime: Leaving lock profiling enabled
-50328:10-26 15:21:17.337  6567  6567 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-50412:10-26 15:21:18.377  6567  6567 D AndroidRuntime: Shutting down VM
-50483:10-26 15:21:24.513  6590  6590 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-50484:10-26 15:21:24.517  6590  6590 I AndroidRuntime: Using default boot image
-50485:10-26 15:21:24.517  6590  6590 I AndroidRuntime: Leaving lock profiling enabled
-50498:10-26 15:21:24.598  6590  6590 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-50561:10-26 15:21:25.622  6590  6590 D AndroidRuntime: Shutting down VM
-50635:10-26 15:21:37.759  6617  6617 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-50636:10-26 15:21:37.763  6617  6617 I AndroidRuntime: Using default boot image
-50637:10-26 15:21:37.763  6617  6617 I AndroidRuntime: Leaving lock profiling enabled
-50651:10-26 15:21:37.846  6617  6617 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-50697:10-26 15:21:38.870  6617  6617 D AndroidRuntime: Shutting down VM
-50785:10-26 15:21:44.802  6636  6636 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-50786:10-26 15:21:44.806  6636  6636 I AndroidRuntime: Using default boot image
-50787:10-26 15:21:44.806  6636  6636 I AndroidRuntime: Leaving lock profiling enabled
-50800:10-26 15:21:44.886  6636  6636 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
-50867:10-26 15:21:45.911  6636  6636 D AndroidRuntime: Shutting down VM
+702:10-28 23:15:52.400  1044  1044 D CarrierSvcBindHelper: onPackageAdded: net.kravos.sports
+792:10-28 23:15:52.640  1085  1127 I Launcher.IconCache: Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{net.kravos.sports/net.kravos.sports.ui.MainActivity}
+918:10-28 23:15:52.753   516  1825 V SplashScreenExceptionList: SplashScreen checking exception for package net.kravos.sports (target sdk:35) -> false
+921:10-28 23:15:52.756   516  1825 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=net.kravos.sports/.ui.MainActivity} with LAUNCH_SINGLE_TOP from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+922:10-28 23:15:52.756   832   865 V WindowManagerShell: Transition requested: android.os.BinderProxy@1351876 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=8 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=net.kravos.sports/.ui.MainActivity } baseActivity=ComponentInfo{net.kravos.sports/net.kravos.sports.ui.MainActivity} topActivity=ComponentInfo{net.kravos.sports/net.kravos.sports.ui.MainActivity} origActivity=null realActivity=ComponentInfo{net.kravos.sports/net.kravos.sports.ui.MainActivity} numActivities=1 lastActiveTime=36854 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@2538e77} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{a061ae4 net.kravos.sports.ui.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+932:10-28 23:15:52.786   516   803 I SdkSandboxManager: No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10192, mPackageName='net.kravos.sports, mAppProcessToken='null'}
+937:10-28 23:15:52.800  1044  1290 D ImsResolver: maybeAddedImsService, packageName: net.kravos.sports
+984:10-28 23:15:52.895   516   548 I ActivityManager: Start proc 2698:net.kravos.sports/u0a192 for next-top-activity {net.kravos.sports/net.kravos.sports.ui.MainActivity}
+1048:10-28 23:15:53.052   516  2463 D CoreBackPreview: Window{942e593 u0 Splash Screen net.kravos.sports}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@4d117d9, mPriority=0, mIsAnimationCallback=false}
+1278:10-28 23:15:53.375  2698  2698 D nativeloader: Configuring clns-6 for other apk /data/app/~~dldhvRyIFXgunJajSXAopw==/net.kravos.sports-LGPSAAHStRXbGpgnkjmrxA==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~dldhvRyIFXgunJajSXAopw==/net.kravos.sports-LGPSAAHStRXbGpgnkjmrxA==/lib/x86_64:/data/app/~~dldhvRyIFXgunJajSXAopw==/net.kravos.sports-LGPSAAHStRXbGpgnkjmrxA==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/net.kravos.sports
+1473:10-28 23:15:53.491   516   536 V WindowManager: Sent Transition #6 createdAt=10-28 23:15:52.730 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=8 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=net.kravos.sports/.ui.MainActivity } baseActivity=ComponentInfo{net.kravos.sports/net.kravos.sports.ui.MainActivity} topActivity=ComponentInfo{net.kravos.sports/net.kravos.sports.ui.MainActivity} origActivity=null realActivity=ComponentInfo{net.kravos.sports/net.kravos.sports.ui.MainActivity} numActivities=1 lastActiveTime=36854 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{1020c67 Task{4b4551e #8 type=standard A=10192:net.kravos.sports}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=null topActivityInfo=ActivityInfo{c50da14 net.kravos.sports.ui.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+1475:10-28 23:15:53.491   516   536 V WindowManager:     info={id=6 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{1020c67 Task{4b4551e #8 type=standard A=10192:net.kravos.sports}}} m=OPEN f=NONE leash=Surface(name=Task=8)/@0x25125f sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0},{WCT{RemoteToken{cdd90b2 Task{6b8c7ed #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0x5ee88cb sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0}]}
+1485:10-28 23:15:53.549  2698  2698 V GraphicsEnvironment: ANGLE GameManagerService for net.kravos.sports: false
+1486:10-28 23:15:53.549  2698  2698 V GraphicsEnvironment: net.kravos.sports is not listed in per-application setting
+1542:10-28 23:15:53.635   516  1834 E JobScheduler.JobStatus: App net.kravos.sports became active but still in NEVER bucket
+1548:10-28 23:15:53.644   516  2516 D ConnectivityService: requestNetwork for uid/pid:10192/2698 activeRequest: null callbackRequest: 70 [NetworkRequest [ REQUEST id=71, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: net.kravos.sports UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
+1564:10-28 23:15:53.690   516  1848 D CoreBackPreview: Window{2b0955c u0 net.kravos.sports/net.kravos.sports.ui.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@2bb0fa7, mPriority=0, mIsAnimationCallback=false}
+1815:10-28 23:15:54.033   516   546 D AppWidgetServiceImpl: Provider info from ComponentInfo{net.kravos.sports/net.kravos.sports.widget.ScoresWidgetReceiver} won't be persisted.
+1893:10-28 23:15:54.090   844   844 I SafetyLabelChangedBroadcastReceiver: received broadcast packageName: net.kravos.sports, current user: UserHandle{0}, packageChangeEvent: NEW_INSTALL, intent user: UserHandle{0}
+2114:10-28 23:15:54.646   516   754 D WifiNetworkFactory: got request NetworkRequest [ REQUEST id=71, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: net.kravos.sports UnderlyingNetworks: Null] ]
+2115:10-28 23:15:54.646   516   754 D UntrustedWifiNetworkFactory: got request NetworkRequest [ REQUEST id=71, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: net.kravos.sports UnderlyingNetworks: Null] ]
+2116:10-28 23:15:54.647   516   754 D OemPaidWifiNetworkFactory: got request NetworkRequest [ REQUEST id=71, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: net.kravos.sports UnderlyingNetworks: Null] ]
+2117:10-28 23:15:54.647   516   754 D MultiInternetWifiNetworkFactory: got request NetworkRequest [ REQUEST id=71, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10192 RequestorUid: 10192 RequestorPkg: net.kravos.sports UnderlyingNetworks: Null] ]
+2172:10-28 23:15:54.741   516   536 I ActivityTaskManager: Displayed net.kravos.sports/.ui.MainActivity for user 0: +1s990ms
+2181:10-28 23:15:54.776   516  1850 W InputManager-JNI: Input channel object '942e593 Splash Screen net.kravos.sports (client)' was disposed without first being removed with the input manager!
+2182:10-28 23:15:54.782   516  2463 D CoreBackPreview: Window{942e593 u0 Splash Screen net.kravos.sports EXITING}: Setting back callback null
+2190:10-28 23:15:54.811   516  2516 I ImeTracker: net.kravos.sports:e7f1c884: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_UNSPECIFIED_WINDOW
+2191:10-28 23:15:54.811   516  2516 I ImeTracker: net.kravos.sports:e7f1c884: onCancelled at PHASE_SERVER_SHOULD_HIDE
+2196:10-28 23:15:54.814  1455  1455 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=net.kravos.sports fieldId=0 fieldName=null extras=null}, false)
+2212:10-28 23:15:54.823  2698  2698 D WM-WorkerWrapper: Starting work for net.kravos.sports.work.WidgetWorker
+2334:10-28 23:15:54.990  2698  2838 I WM-WorkerWrapper: Worker result SUCCESS for Work [ id=57a50439-b408-46a9-9905-927e152fbd0e, tags={ net.kravos.sports.work.WidgetWorker } ]
+2343:10-28 23:15:55.000   516   591 E JobScheduler.JobStatus: App net.kravos.sports became active but still in NEVER bucket
+2427:10-28 23:15:55.121  1044  1044 D CarrierSvcBindHelper: onPackageModified: net.kravos.sports
+2594:10-28 23:15:55.338  1044  1290 D ImsResolver: maybeAddedImsService, packageName: net.kravos.sports
+2768:10-28 23:15:55.693  2698  2944 I KravosSports: GET https://www.fotmob.com/api/data/matches?date=20261028&timezone=Europe%2FBelgrade&ccode3=SRB -> 200 (178742 b)
+3238:10-28 23:15:56.538  1044  1044 D CarrierSvcBindHelper: onPackageModified: net.kravos.sports
+3244:10-28 23:15:56.570  1044  1290 D ImsResolver: maybeAddedImsService, packageName: net.kravos.sports
+4790:10-28 23:15:59.135  1570  1570 I AiAiEcho: AppFetcherImplV2 updateApps package:[net.kravos.sports], userId:[0], reason:[package is added.].
+4906:10-28 23:15:59.338   516   546 D AppWidgetServiceImpl: Provider info from ComponentInfo{net.kravos.sports/net.kravos.sports.widget.ScoresWidgetReceiver} won't be persisted.
+5165:10-28 23:15:59.677  2698  2698 V ActivityThread: getPackageInfo() caused update to cached ApplicationInfo for package net.kravos.sports
+5169:10-28 23:15:59.682  2698  2698 D WM-RescheduleReceiver: Received intent Intent { act=android.intent.action.BOOT_COMPLETED flg=0x89000010 cmp=net.kravos.sports/androidx.work.impl.background.systemalarm.RescheduleReceiver (has extras) }
+5173:10-28 23:15:59.689  2698  3514 D ProfileInstaller: Installing profile for net.kravos.sports
+6055:10-28 23:16:01.154  1570  1570 I AiAiEcho: AppFetcherImpl onPackageChanged net.kravos.sports.
+6056:10-28 23:16:01.155  1570  2924 I AiAiEcho: AppIndexer Package:[net.kravos.sports] UserProfile:[0] Enabled:[true].
+6057:10-28 23:16:01.155  1570  2924 I AiAiEcho: AppFetcherImplV2 updateApps package:[net.kravos.sports], userId:[0], reason:[package is updated.].
+7533:10-28 23:16:03.658  1570  1570 I AiAiEcho: AppFetcherImpl onPackageChanged net.kravos.sports.
+7548:10-28 23:16:03.671  1570  2631 I AiAiEcho: AppIndexer Package:[net.kravos.sports] UserProfile:[0] Enabled:[true].
+7549:10-28 23:16:03.671  1570  2631 I AiAiEcho: AppFetcherImplV2 updateApps package:[net.kravos.sports], userId:[0], reason:[package is updated.].
+7954:10-28 23:16:04.159  1448  3272 I BlockstoreStorage: Clearing Blockstore Data for package net.kravos.sports [CONTEXT service_id=258 ]
+7960:10-28 23:16:04.174  1404  1823 I FontLog : Package net.kravos.sports has no metadata [CONTEXT service_id=132 ]
+15598:10-28 23:16:11.227  2698  3164 I KravosSports: GET https://www.fotmob.com/api/data/matches?date=20261028&timezone=Europe%2FBelgrade&ccode3=SRB -> 200 (178742 b)
+18769:10-28 23:16:22.948  4637  4637 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+18771:10-28 23:16:22.968  4637  4637 I AndroidRuntime: Using default boot image
+18772:10-28 23:16:22.968  4637  4637 I AndroidRuntime: Leaving lock profiling enabled
+18815:10-28 23:16:23.183  4637  4637 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+18935:10-28 23:16:24.302  4637  4637 D AndroidRuntime: Shutting down VM
+19221:10-28 23:16:25.874  2698  2943 I KravosSports: GET https://www.fotmob.com/api/data/matches?date=20261027&timezone=Europe%2FBelgrade&ccode3=SRB -> 200 (156356 b)
+24358:10-28 23:16:34.539  4919  4919 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+24359:10-28 23:16:34.545  4919  4919 I AndroidRuntime: Using default boot image
+24360:10-28 23:16:34.545  4919  4919 I AndroidRuntime: Leaving lock profiling enabled
+24528:10-28 23:16:34.732  4919  4919 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+25217:10-28 23:16:35.815  4919  4919 D AndroidRuntime: Shutting down VM
+25361:10-28 23:16:37.833  2698  2943 I KravosSports: GET https://www.fotmob.com/api/data/matchDetails?matchId=5749727 -> 200 (306365 b)
+30436:10-28 23:16:51.115  5536  5536 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+30437:10-28 23:16:51.120  5536  5536 I AndroidRuntime: Using default boot image
+30438:10-28 23:16:51.120  5536  5536 I AndroidRuntime: Leaving lock profiling enabled
+30452:10-28 23:16:51.212  5536  5536 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+30518:10-28 23:16:52.282  5536  5536 D AndroidRuntime: Shutting down VM
+38093:10-28 23:17:00.443  5684  5684 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+38098:10-28 23:17:00.447  5684  5684 I AndroidRuntime: Using default boot image
+38099:10-28 23:17:00.447  5684  5684 I AndroidRuntime: Leaving lock profiling enabled
+38153:10-28 23:17:00.571  5684  5684 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+39125:10-28 23:17:01.614  5684  5684 D AndroidRuntime: Shutting down VM
+45366:10-28 23:17:12.278  5787  5787 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+45367:10-28 23:17:12.284  5787  5787 I AndroidRuntime: Using default boot image
+45368:10-28 23:17:12.284  5787  5787 I AndroidRuntime: Leaving lock profiling enabled
+45383:10-28 23:17:12.413  5787  5787 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+45431:10-28 23:17:13.473  5787  5787 D AndroidRuntime: Shutting down VM
+45522:10-28 23:17:14.777  2698  2943 I KravosSports: GET https://www.fotmob.com/api/data/heatmap/match/5749727/heatmaps?heatmapUrl=https%3A%2F%2Fpub.fotmob.com%2Fprod%2Fdb%2Fapi%2Fheatmap%2Fmatch%2F5749727 -> 200 (70854 b)
+45696:10-28 23:17:34.728  5851  5851 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+45697:10-28 23:17:34.733  5851  5851 I AndroidRuntime: Using default boot image
+45698:10-28 23:17:34.733  5851  5851 I AndroidRuntime: Leaving lock profiling enabled
+45711:10-28 23:17:34.824  5851  5851 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+45767:10-28 23:17:35.863  5851  5851 D AndroidRuntime: Shutting down VM
+46519:10-28 23:17:44.010  5953  5953 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+46520:10-28 23:17:44.015  5953  5953 I AndroidRuntime: Using default boot image
+46521:10-28 23:17:44.015  5953  5953 I AndroidRuntime: Leaving lock profiling enabled
+46535:10-28 23:17:44.118  5953  5953 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+46590:10-28 23:17:45.161  5953  5953 D AndroidRuntime: Shutting down VM
+46876:10-28 23:17:47.011  2698  2943 I KravosSports: GET https://www.fotmob.com/api/data/leagues?id=55 -> 200 (803299 b)
+46936:10-28 23:17:53.256  6009  6009 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+46937:10-28 23:17:53.260  6009  6009 I AndroidRuntime: Using default boot image
+46938:10-28 23:17:53.260  6009  6009 I AndroidRuntime: Leaving lock profiling enabled
+46972:10-28 23:17:53.371  6009  6009 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+47029:10-28 23:17:54.417  6009  6009 D AndroidRuntime: Shutting down VM
+47170:10-28 23:18:03.998  2698  6001 I KravosSports: GET https://www.fotmob.com/api/data/matches?date=20261028&timezone=Europe%2FBelgrade&ccode3=SRB -> 200 (178769 b)
+47452:10-28 23:18:05.789  6078  6078 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+47453:10-28 23:18:05.815  6078  6078 I AndroidRuntime: Using default boot image
+47454:10-28 23:18:05.815  6078  6078 I AndroidRuntime: Leaving lock profiling enabled
+47467:10-28 23:18:06.076  6078  6078 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+47580:10-28 23:18:07.120  6078  6078 D AndroidRuntime: Shutting down VM
+47709:10-28 23:18:17.200  6117  6117 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+47710:10-28 23:18:17.204  6117  6117 I AndroidRuntime: Using default boot image
+47711:10-28 23:18:17.204  6117  6117 I AndroidRuntime: Leaving lock profiling enabled
+47724:10-28 23:18:17.296  6117  6117 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+47780:10-28 23:18:18.334  6117  6117 D AndroidRuntime: Shutting down VM
+47846:10-28 23:18:19.541  2698  6000 I KravosSports: GET https://www.fotmob.com/api/data/matches?date=20261028&timezone=Europe%2FBelgrade&ccode3=SRB -> 200 (178769 b)
+47867:10-28 23:18:24.278  6138  6138 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+47868:10-28 23:18:24.282  6138  6138 I AndroidRuntime: Using default boot image
+47869:10-28 23:18:24.282  6138  6138 I AndroidRuntime: Leaving lock profiling enabled
+47882:10-28 23:18:24.373  6138  6138 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+48019:10-28 23:18:25.413  6138  6138 D AndroidRuntime: Shutting down VM
+48126:10-28 23:18:26.636  2698  6000 I KravosSports: GET https://prod-cdn-public-api.livescore.com/v1/api/app/date/basketball/20261028/0?countryCode=RS&locale=en&MD=1 -> 200 (51063 b)
+48127:10-28 23:18:26.651  2698  6001 I KravosSports: GET https://api-live.euroleague.net/v2/competitions/U/seasons/U2026/games -> 200 (434332 b)
+48128:10-28 23:18:26.686  2698  2945 I KravosSports: GET https://api-live.euroleague.net/v2/competitions/E/seasons/E2026/games -> 200 (721543 b)
+48236:10-28 23:18:35.509  6234  6234 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+48237:10-28 23:18:35.514  6234  6234 I AndroidRuntime: Using default boot image
+48238:10-28 23:18:35.514  6234  6234 I AndroidRuntime: Leaving lock profiling enabled
+48252:10-28 23:18:35.606  6234  6234 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+48308:10-28 23:18:36.640  6234  6234 D AndroidRuntime: Shutting down VM
+48385:10-28 23:18:37.861  2698  6226 I KravosSports: GET https://live.euroleague.net/api/Boxscore?gamecode=79&seasoncode=E2026 -> 200 (13202 b)
+48439:10-28 23:18:46.720  6274  6274 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+48440:10-28 23:18:46.725  6274  6274 I AndroidRuntime: Using default boot image
+48441:10-28 23:18:46.725  6274  6274 I AndroidRuntime: Leaving lock profiling enabled
+48454:10-28 23:18:46.816  6274  6274 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+48513:10-28 23:18:47.849  6274  6274 D AndroidRuntime: Shutting down VM
+48597:10-28 23:18:56.105  2698  6002 I KravosSports: GET https://prod-cdn-public-api.livescore.com/v1/api/app/date/basketball/20261028/0?countryCode=RS&locale=en&MD=1 -> 200 (51063 b)
+48598:10-28 23:18:57.983  6315  6315 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+48599:10-28 23:18:57.988  6315  6315 I AndroidRuntime: Using default boot image
+48600:10-28 23:18:57.988  6315  6315 I AndroidRuntime: Leaving lock profiling enabled
+48613:10-28 23:18:58.085  6315  6315 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+48670:10-28 23:18:59.134  6315  6315 D AndroidRuntime: Shutting down VM
+48746:10-28 23:19:00.227  2698  6002 I KravosSports: GET https://prod-cdn-public-api.livescore.com/v1/api/app/date/tennis/20261028/0?countryCode=RS&locale=en&MD=1 -> 200 (72039 b)
+48755:10-28 23:19:09.240  6346  6346 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+48756:10-28 23:19:09.244  6346  6346 I AndroidRuntime: Using default boot image
+48757:10-28 23:19:09.244  6346  6346 I AndroidRuntime: Leaving lock profiling enabled
+48770:10-28 23:19:09.334  6346  6346 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+48825:10-28 23:19:10.426  6346  6346 D AndroidRuntime: Shutting down VM
+48904:10-28 23:19:15.393  2698  6002 I KravosSports: GET https://prod-cdn-public-api.livescore.com/v1/api/app/date/tennis/20261028/0?countryCode=RS&locale=en&MD=1 -> 200 (72039 b)
+48937:10-28 23:19:20.496  6369  6369 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+48938:10-28 23:19:20.500  6369  6369 I AndroidRuntime: Using default boot image
+48939:10-28 23:19:20.500  6369  6369 I AndroidRuntime: Leaving lock profiling enabled
+48952:10-28 23:19:20.590  6369  6369 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+49052:10-28 23:19:21.697  6369  6369 D AndroidRuntime: Shutting down VM
+49134:10-28 23:19:22.939  2698  6002 I KravosSports: GET https://www.fotmob.com/api/data/matches?date=20261028&timezone=Europe%2FBelgrade&ccode3=SRB -> 200 (178823 b)
+49140:10-28 23:19:29.667  6393  6393 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+49141:10-28 23:19:29.671  6393  6393 I AndroidRuntime: Using default boot image
+49142:10-28 23:19:29.671  6393  6393 I AndroidRuntime: Leaving lock profiling enabled
+49155:10-28 23:19:29.758  6393  6393 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+49212:10-28 23:19:30.794  6393  6393 D AndroidRuntime: Shutting down VM
+49454:10-28 23:19:32.256  2698  6002 I KravosSports: GET https://www.fotmob.com/api/data/allLeagues?locale=en&country=SRB -> 200 (86008 b)
+49473:10-28 23:19:32.284   516   536 V WindowManager:     info={id=7 t=TO_FRONT f=0x80 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{cdd90b2 Task{6b8c7ed #1 type=home}}} m=TO_FRONT f=SHOW_WALLPAPER|MOVE_TO_TOP leash=Surface(name=Task=1)/@0x5ee88cb sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0},{WCT{RemoteToken{1020c67 Task{4b4551e #8 type=standard A=10192:net.kravos.sports}}} m=TO_BACK f=NONE leash=Surface(name=Task=8)/@0x25125f sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{a4d3f52 token=android.os.Binder@453e7dd})/@0x9e8f024 sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0}]}
+49538:10-28 23:19:39.883  6444  6444 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+49539:10-28 23:19:39.887  6444  6444 I AndroidRuntime: Using default boot image
+49540:10-28 23:19:39.887  6444  6444 I AndroidRuntime: Leaving lock profiling enabled
+49553:10-28 23:19:39.985  6444  6444 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+49609:10-28 23:19:41.022  6444  6444 D AndroidRuntime: Shutting down VM
+49680:10-28 23:19:42.741  2698  6428 I KravosSports: GET https://www.fotmob.com/api/data/leagues?id=47 -> 200 (856671 b)
+49696:10-28 23:19:51.130  6473  6473 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+49697:10-28 23:19:51.135  6473  6473 I AndroidRuntime: Using default boot image
+49698:10-28 23:19:51.135  6473  6473 I AndroidRuntime: Leaving lock profiling enabled
+49711:10-28 23:19:51.224  6473  6473 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+49757:10-28 23:19:52.320  6473  6473 D AndroidRuntime: Shutting down VM
+49921:10-28 23:20:04.446  6557  6557 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+49922:10-28 23:20:04.450  6557  6557 I AndroidRuntime: Using default boot image
+49923:10-28 23:20:04.450  6557  6557 I AndroidRuntime: Leaving lock profiling enabled
+49937:10-28 23:20:04.544  6557  6557 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+49982:10-28 23:20:05.564  6557  6557 D AndroidRuntime: Shutting down VM
+50088:10-28 23:20:06.503   516   536 V WindowManager:     info={id=8 t=TO_FRONT f=0x80 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{cdd90b2 Task{6b8c7ed #1 type=home}}} m=TO_FRONT f=SHOW_WALLPAPER|MOVE_TO_TOP leash=Surface(name=Task=1)/@0x5ee88cb sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0},{WCT{RemoteToken{1020c67 Task{4b4551e #8 type=standard A=10192:net.kravos.sports}}} m=TO_BACK f=NONE leash=Surface(name=Task=8)/@0x25125f sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{a4d3f52 token=android.os.Binder@453e7dd})/@0x9e8f024 sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0}]}
+50231:10-28 23:20:11.529  6602  6602 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+50232:10-28 23:20:11.533  6602  6602 I AndroidRuntime: Using default boot image
+50233:10-28 23:20:11.533  6602  6602 I AndroidRuntime: Leaving lock profiling enabled
+50246:10-28 23:20:11.627  6602  6602 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+50303:10-28 23:20:12.646  6602  6602 D AndroidRuntime: Shutting down VM
+50372:10-28 23:20:13.553  1455  1455 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x8001(Normal) imeOptions=0x2000006 privateImeOptions=null actionName=DONE actionLabel=null actionId=0 initialSelStart=0 initialSelEnd=0 initialCapsMode=0x0 hintText=null label=null packageName=net.kravos.sports fieldId=-1 fieldName=null extras=Bundle[mParcelledData.dataSize=404]}, false)
+50374:10-28 23:20:13.553  2698  2698 I ImeTracker: net.kravos.sports:19cdc8eb: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT_BY_INSETS_API
+50382:10-28 23:20:13.558  2698  2698 I ImeTracker: net.kravos.sports:22c86f5d: onRequestShow at ORIGIN_CLIENT_SHOW_SOFT_INPUT reason SHOW_SOFT_INPUT
+50401:10-28 23:20:13.572  1455  1455 I GoogleInputMethodService: GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x8001(Normal) imeOptions=0x2000006 privateImeOptions=null actionName=DONE actionLabel=null actionId=0 initialSelStart=0 initialSelEnd=0 initialCapsMode=0x0 hintText=null label=null packageName=net.kravos.sports fieldId=-1 fieldName=null extras=Bundle[mParcelledData.dataSize=404]}, true)
+50405:10-28 23:20:13.572  1455  1455 I GoogleInputMethodService: GoogleInputMethodService.onStartInputView():1995 onStartInputView(EditorInfo{inputType=0x8001(Normal) imeOptions=0x2000006 privateImeOptions=null actionName=DONE actionLabel=null actionId=0 initialSelStart=0 initialSelEnd=0 initialCapsMode=0x0 hintText=null label=null packageName=net.kravos.sports fieldId=-1 fieldName=null extras=Bundle[{android.support.text.emoji.emojiCompat_metadataVersion=9, androidx.core.view.inputmethod.EditorInfoCompat.STYLUS_HANDWRITING_ENABLED=true, android.support.text.emoji.emojiCompat_replaceAll=false}]}, false)
+50415:10-28 23:20:13.605  1455  1455 I AndroidIME: AbstractIme.onActivate():86 LatinIme.onActivate() : EditorInfo = inputType=0x8001(Normal) imeOptions=0x2000006 privateImeOptions=null actionName=DONE actionLabel=null actionId=0 initialSelStart=0 initialSelEnd=0 initialCapsMode=0x0 hintText=null label=null packageName=net.kravos.sports fieldId=-1 fieldName=null extras=Bundle[{android.support.text.emoji.emojiCompat_metadataVersion=9, androidx.core.view.inputmethod.EditorInfoCompat.STYLUS_HANDWRITING_ENABLED=true, android.support.text.emoji.emojiCompat_replaceAll=false}], IncognitoMode = false, DeviceLocked = false
+50461:10-28 23:20:13.631   516   591 D CoreBackPreview: Window{2b0955c u0 net.kravos.sports/net.kravos.sports.ui.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@acd57b2, mPriority=0, mIsAnimationCallback=false}
+50465:10-28 23:20:13.632   516  1621 I ImeTracker: net.kravos.sports:19cdc8eb: onFailed at PHASE_WM_SHOW_IME_RUNNER
+50644:10-28 23:20:14.280  2698  2698 I ImeTracker: net.kravos.sports:22c86f5d: onShown
+50659:10-28 23:20:14.345  2698  2698 W FrameTracker: Missed SF frame:PREDICTION_ERROR, 11129, 0, CUJ=J<IME_INSETS_ANIMATION::0@1@net.kravos.sports>
+50733:10-28 23:20:17.204  2698  6529 I KravosSports: GET https://api-live.euroleague.net/v2/competitions/U/seasons/U2026/clubs -> 200 (21934 b)
+50734:10-28 23:20:17.228  2698  6518 I KravosSports: GET https://www.fotmob.com/api/data/search/suggest?term=Partizan&lang=en -> 200 (3543 b)
+50746:10-28 23:20:17.497  2698  6532 I KravosSports: GET https://api-live.euroleague.net/v2/competitions/E/seasons/E2026/clubs -> 200 (13695 b)
+50781:10-28 23:20:23.844  6669  6669 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+50782:10-28 23:20:23.848  6669  6669 I AndroidRuntime: Using default boot image
+50783:10-28 23:20:23.848  6669  6669 I AndroidRuntime: Leaving lock profiling enabled
+50796:10-28 23:20:23.969  6669  6669 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+50856:10-28 23:20:25.013  6669  6669 D AndroidRuntime: Shutting down VM
+50938:10-28 23:20:31.138  6695  6695 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+50939:10-28 23:20:31.143  6695  6695 I AndroidRuntime: Using default boot image
+50940:10-28 23:20:31.143  6695  6695 I AndroidRuntime: Leaving lock profiling enabled
+50953:10-28 23:20:31.249  6695  6695 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+51012:10-28 23:20:32.276  6695  6695 D AndroidRuntime: Shutting down VM
+51113:10-28 23:20:44.361  6726  6726 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+51114:10-28 23:20:44.366  6726  6726 I AndroidRuntime: Using default boot image
+51115:10-28 23:20:44.366  6726  6726 I AndroidRuntime: Leaving lock profiling enabled
+51128:10-28 23:20:44.456  6726  6726 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+51190:10-28 23:20:45.492  6726  6726 D AndroidRuntime: Shutting down VM
+51299:10-28 23:20:46.436   516   536 V WindowManager:     info={id=9 t=TO_FRONT f=0x80 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{cdd90b2 Task{6b8c7ed #1 type=home}}} m=TO_FRONT f=SHOW_WALLPAPER|MOVE_TO_TOP leash=Surface(name=Task=1)/@0x5ee88cb sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0},{WCT{RemoteToken{1020c67 Task{4b4551e #8 type=standard A=10192:net.kravos.sports}}} m=TO_BACK f=NONE leash=Surface(name=Task=8)/@0x25125f sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0},{null m=TO_FRONT f=IS_WALLPAPER leash=Surface(name=WallpaperWindowToken{a4d3f52 token=android.os.Binder@453e7dd})/@0x9e8f024 sb=Rect(0, 0 - 320, 640) eb=Rect(0, 0 - 320, 640) d=0}]}
+51358:10-28 23:20:51.533  6767  6767 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+51359:10-28 23:20:51.537  6767  6767 I AndroidRuntime: Using default boot image
+51360:10-28 23:20:51.538  6767  6767 I AndroidRuntime: Leaving lock profiling enabled
+51373:10-28 23:20:51.625  6767  6767 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+51443:10-28 23:20:52.661  6767  6767 D AndroidRuntime: Shutting down VM
