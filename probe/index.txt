@@ -1,7 +1,4 @@
-candidates [('Super Liga', 1000015079), ('Serie A', 5749727), ('Serie A', 5749721), ('Serie A', 5749728)]
-Super Liga 1000015079 desk+origin: 200 acao=* len=150583 keys=['buzz', 'h2h', 'hasPlayoff', 'lineup', 'liveticker', 'matchFacts', 'momentum', 'playerStats', 'shotmap', 'stats', 'superlive', 'table', 'weather'] stats=dict periods=['All', 'FirstHalf', 'SecondHalf'] groups=6
-Super Liga 1000015079 mobile: 200 acao=None len=150583 keys=['buzz', 'h2h', 'hasPlayoff', 'lineup', 'liveticker', 'matchFacts', 'momentum', 'playerStats', 'shotmap', 'stats', 'superlive', 'table', 'weather'] stats=dict periods=['All', 'FirstHalf', 'SecondHalf'] groups=6
-Serie A 5749727 desk+origin: 200 acao=* len=306621 keys=['attackingZones', 'buzz', 'h2h', 'hasPlayoff', 'heatmapUrl', 'highlightStories', 'lineup', 'liveticker', 'matchFacts', 'momentum', 'playerStats', 'shotmap', 'stats', 'superlive'] stats=dict periods=['All', 'FirstHalf', 'SecondHalf'] groups=7
-Serie A 5749727 mobile: 200 acao=None len=306621 keys=['attackingZones', 'buzz', 'h2h', 'hasPlayoff', 'heatmapUrl', 'highlightStories', 'lineup', 'liveticker', 'matchFacts', 'momentum', 'playerStats', 'shotmap', 'stats', 'superlive'] stats=dict periods=['All', 'FirstHalf', 'SecondHalf'] groups=7
-Serie A 5749721 desk+origin: 200 acao=* len=339714 keys=['attackingZones', 'buzz', 'h2h', 'hasPlayoff', 'heatmapUrl', 'highlightStories', 'lineup', 'liveticker', 'matchFacts', 'momentum', 'playerStats', 'shotmap', 'stats', 'superlive'] stats=dict periods=['All', 'FirstHalf', 'SecondHalf'] groups=7
-Serie A 5749721 mobile: 200 acao=None len=339714 keys=['attackingZones', 'buzz', 'h2h', 'hasPlayoff', 'heatmapUrl', 'highlightStories', 'lineup', 'liveticker', 'matchFacts', 'momentum', 'playerStats', 'shotmap', 'stats', 'superlive'] stats=dict periods=['All', 'FirstHalf', 'SecondHalf'] groups=7
+GET 200 acao=* len=13718 https://live.euroleague.net/api/Boxscore?gamecode=1&seasoncode=E2026
+OPTIONS 200 acao=* len=0 https://live.euroleague.net/api/Boxscore?gamecode=1&seasoncode=E2026
+GET 200 acao=* len=933 https://live.euroleague.net/api/Header?gamecode=1&seasoncode=E2026
+OPTIONS 200 acao=* len=0 https://live.euroleague.net/api/Header?gamecode=1&seasoncode=E2026
