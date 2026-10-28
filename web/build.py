@@ -3,7 +3,7 @@
 
 The EuroLeague v2 API sends no CORS header, so the runner downloads the game lists
 (Evroliga + Evrokup) and the page reads them from el.json. Live scores come straight
-from the browser (live.euroleague.net allows it). Runs on GitHub every ~10 minutes.
+from the browser (live.euroleague.net allows it). Runs on GitHub every ~6 minutes (self-chaining web.yml).
 
 usage: build.py <out-dir>
 """

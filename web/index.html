@@ -173,7 +173,7 @@ const scoreStr = s => { const p = String(s || "").split("-").map(x => parseInt(x
 
 async function fmDay(date) {
   const today = sameDay(date, new Date());
-  const j = await getJSON(`${FM}/matches?date=${ymd(date)}&timezone=${TZ}&ccode3=SRB`, today ? 15 : 300);
+  const j = await getJSON(`${FM}/matches?date=${ymd(date)}&timezone=${TZ}&ccode3=SRB`, today ? 8 : 300);
   const out = [];
   for (const lg of j.leagues || []) {
     const pid = lg.primaryId || lg.id;
@@ -258,7 +258,7 @@ async function espnDay(sport, date) {
   const today = sameDay(date, new Date());
   const wide = sport === "f1" || sport === "mma";
   const q = wide ? `${ymd(new Date(date.getTime() - 3 * 864e5))}-${ymd(new Date(date.getTime() + 3 * 864e5))}` : ymd(date);
-  const res = await Promise.allSettled(ESPN[sport].map(p => getJSON(`${ESPN_BASE}/${p}/scoreboard?dates=${q}`, today ? 20 : 300).then(r => espnEvents(r, sport, p, date))));
+  const res = await Promise.allSettled(ESPN[sport].map(p => getJSON(`${ESPN_BASE}/${p}/scoreboard?dates=${q}`, today ? 8 : 300).then(r => espnEvents(r, sport, p, date))));
   const ok = res.filter(r => r.status === "fulfilled");
   if (!ok.length) throw res[0].reason;
   return ok.flatMap(r => r.value);
@@ -282,7 +282,7 @@ async function elDay(date) {
   // live overlay for games that should be running
   await Promise.all(evs.filter(e => e.st.k !== "ft" && e.start <= now + 60000 && now - e.start < 4 * 36e5).map(async e => {
     try {
-      const h = await getJSON(`https://live.euroleague.net/api/Header?gamecode=${e._code}&seasoncode=${e._c}${e._season}`, 10);
+      const h = await getJSON(`https://live.euroleague.net/api/Header?gamecode=${e._code}&seasoncode=${e._c}${e._season}`, 8);
       const a = num(h.ScoreA), b = num(h.ScoreB);
       const q = [1, 2, 3, 4].map(i => [num(h["ScoreQuarter" + i + "A"]), num(h["ScoreQuarter" + i + "B"])]);
       const per = k => { let prev = 0; const o = []; for (const v of q.map(x => x[k])) { if (!v || v <= 0) break; o.push(v - prev); prev = v; } return o; };
@@ -472,9 +472,10 @@ function renderFmTable(j) {
 
 async function showFmMatch(id, tab) {
   const m = $("#main");
-  m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  if (m.dataset.shown !== location.hash) m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  m.dataset.shown = location.hash;
   let j;
-  try { j = await getJSON(`${FM}/matchDetails?matchId=${id}`, 10); }
+  try { j = await getJSON(`${FM}/matchDetails?matchId=${id}`, 8); }
   catch (err) { m.innerHTML = back() + `<div class="err">Utakmica nije dostupna (${esc(err.message)})</div>`; return; }
   if (!location.hash.startsWith("#/m/fm/" + id)) return;
   const g = j.general || {}, h = j.header || {}, c = j.content || {};
@@ -515,12 +516,13 @@ async function showFmMatch(id, tab) {
     catch (err) { body = `<div class="err">Tabela nije dostupna</div>`; }
   }
   m.innerHTML = back() + hdr(e) + `<div class="tabs">${tabs.map(([k, l]) => `<a class="chip ${k === cur ? "on" : ""}" href="#/m/fm/${id}/${k}">${l}</a>`).join("")}</div>` + body;
-  detailTimer(() => showFmMatch(id, cur), st.k === "live" ? 20 : 0);
+  detailTimer(() => showFmMatch(id, cur), st.k === "live" ? 10 : 0);
 }
 
 async function showLeague(id) {
   const m = $("#main");
-  m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  if (m.dataset.shown !== location.hash) m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  m.dataset.shown = location.hash;
   try {
     const j = await getJSON(`${FM}/leagues?id=${id}`, 300);
     const d = j.details || {};
@@ -541,7 +543,8 @@ async function showLeague(id) {
 /* ---------- detail: ESPN ---------- */
 async function showEspnMatch(path, id) {
   const m = $("#main");
-  m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  if (m.dataset.shown !== location.hash) m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  m.dataset.shown = location.hash;
   const sport = Object.keys(ESPN).find(k => ESPN[k].includes(path)) || "nfl";
   try {
     if (sport === "f1" || sport === "mma") {
@@ -561,7 +564,7 @@ async function showEspnMatch(path, id) {
         }).join("");
       return;
     }
-    const j = await getJSON(`${ESPN_BASE}/${path}/summary?event=${id}`, 15);
+    const j = await getJSON(`${ESPN_BASE}/${path}/summary?event=${id}`, 8);
     const hc = ((j.header || {}).competitions || [])[0];
     if (!hc) throw new Error("nema podataka");
     const root = { leagues: [], events: [{ id, competitions: [hc] }] };
@@ -580,14 +583,15 @@ async function showEspnMatch(path, id) {
     const lsH = (e.sets && e.sets[0]) || [], lsA = (e.sets && e.sets[1]) || [];
     const venue = ((j.gameInfo || {}).venue || {}).fullName;
     m.innerHTML = back() + hdr(e, setsRow(e)) + `<div style="height:12px"></div>` + (stats || `<div class="panel"><div class="note">Detaljna statistika nije dostupna.</div></div>`) + (venue ? `<div class="note">${esc(venue)}</div>` : "");
-    detailTimer(() => showEspnMatch(path, id), e.st.k === "live" ? 20 : 0);
+    detailTimer(() => showEspnMatch(path, id), e.st.k === "live" ? 10 : 0);
   } catch (err) { m.innerHTML = back() + `<div class="err">Događaj nije dostupan (${esc(err.message)})</div>`; }
 }
 
 /* ---------- detail: EuroLeague ---------- */
 async function showElMatch(c, code) {
   const m = $("#main");
-  m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  if (m.dataset.shown !== location.hash) m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  m.dataset.shown = location.hash;
   try {
     const j = await getJSON("el.json?" + Math.floor(Date.now() / 300000), 120);
     const g = j.games.find(x => x.c === c && String(x.code) === String(code));
@@ -599,14 +603,14 @@ async function showElMatch(c, code) {
     const now = Date.now();
     if (!g.played && start <= now + 60000 && now - start < 4 * 36e5) {
       try {
-        const h = await getJSON(`https://live.euroleague.net/api/Header?gamecode=${code}&seasoncode=${c}${j.season}`, 10);
+        const h = await getJSON(`https://live.euroleague.net/api/Header?gamecode=${code}&seasoncode=${c}${j.season}`, 8);
         const q = [1, 2, 3, 4].map(i => [num(h["ScoreQuarter" + i + "A"]), num(h["ScoreQuarter" + i + "B"])]);
         const per = k => { let prev = 0; const o = []; for (const v of q.map(x => x[k])) { if (!v || v <= 0) break; o.push(v - prev); prev = v; } return o; };
         if (h.Live) { const qq = String(h.Quarter || "").trim(); e.st = { k: "live", label: (/^\d+$/.test(qq) ? "Q" + qq : qq) + " " + String(h.RemainingPartialTime || "").trim() }; e.hs = num(h.ScoreA); e.as = num(h.ScoreB); e.sets = [per(0), per(1)]; }
       } catch (err) {}
     }
     m.innerHTML = back() + hdr(e, setsRow(e)) + `<div class="note">Za detaljnu statistiku košarke koristi aplikaciju.</div>`;
-    detailTimer(() => showElMatch(c, code), e.st.k === "live" ? 15 : 0);
+    detailTimer(() => showElMatch(c, code), e.st.k === "live" ? 10 : 0);
   } catch (err) { m.innerHTML = back() + `<div class="err">Utakmica nije dostupna (${esc(err.message)})</div>`; }
 }
 
@@ -614,7 +618,10 @@ async function showElMatch(c, code) {
 let dtimer = null;
 function detailTimer(fn, sec) {
   clearTimeout(dtimer);
-  if (sec > 0) dtimer = setTimeout(() => { if (!document.hidden) fn(); else detailTimer(fn, sec); }, sec * 1000);
+  if (sec > 0) dtimer = setTimeout(async () => {
+    if (document.hidden) { detailTimer(fn, sec); return; }
+    const y = window.scrollY; await fn(); window.scrollTo(0, y);
+  }, sec * 1000);
 }
 let lastScroll = 0;
 function route() {
@@ -625,7 +632,7 @@ function route() {
   else if ((r = /^#\/m\/espn\/(.+)\/(\d+)$/.exec(h))) showEspnMatch(r[1], r[2]);
   else if ((r = /^#\/m\/el\/(\w+)\/(\d+)$/.exec(h))) showElMatch(r[1], r[2]);
   else if ((r = /^#\/l\/(\d+)$/.exec(h))) showLeague(r[1]);
-  else { renderList(); window.scrollTo(0, lastScroll); return; }
+  else { $("#main").dataset.shown = ""; renderList(); window.scrollTo(0, lastScroll); return; }
   window.scrollTo(0, 0);
 }
 window.addEventListener("hashchange", route);
@@ -649,7 +656,7 @@ setInterval(() => {
   if (location.hash && location.hash !== "#/") return;
   const live = state.events.some(e => e.st.k === "live");
   if (sameDay(state.date, new Date()) && (live || Date.now() - (refresh.last || 0) > 60000)) { refresh.last = Date.now(); refresh(true); }
-}, 20000);
+}, 10000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden && (!location.hash || location.hash === "#/")) refresh(true); });
 
 renderChrome();
