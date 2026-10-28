@@ -95,6 +95,24 @@ td:first-child,th:first-child{text-align:left;width:26px}
 td.tn{display:flex;gap:8px;align-items:center;border:0}
 td.tn img{width:18px;height:18px;object-fit:contain}
 tr.z td:first-child{box-shadow:inset 3px 0 0 var(--zc,transparent)}
+.box{overflow-x:auto;margin:0 -12px;padding:0 12px}
+.box table{min-width:620px;font-size:13px}
+.box th,.box td{white-space:nowrap;padding:6px 5px}
+.box td:nth-child(2),.box th:nth-child(2){position:sticky;left:0;background:var(--card);max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.box tr.st td{font-weight:600}
+.box td:first-child,.box th:first-child{width:24px;color:var(--dim)}
+details.pp{border-top:1px solid var(--line)}
+details.pp summary{list-style:none;display:grid;grid-template-columns:1fr 40px 34px 26px 26px;gap:6px;align-items:center;padding:8px 0;cursor:pointer;font-size:14px;font-variant-numeric:tabular-nums}
+details.pp summary::-webkit-details-marker{display:none}
+details.pp summary span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+details.pp summary b,details.pp summary em{text-align:right;font-style:normal}
+details.pp summary .r{font-size:12px;padding:1px 5px;border-radius:5px;color:#fff;text-align:center}
+.pph{display:grid;grid-template-columns:1fr 40px 34px 26px 26px;gap:6px;font-size:11px;color:var(--dim);padding:8px 0 4px;text-align:right}
+.pph span:first-child{text-align:left}
+.ppd{padding:0 0 10px;font-size:13px}
+.ppd h5{margin:8px 0 2px;font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.ppd div{display:flex;justify-content:space-between;padding:2px 0}
+.ppd div span:first-child{color:var(--dim)}
 .note{color:var(--dim);font-size:12px;text-align:center;padding:16px 0}
 .sets{display:flex;gap:10px;justify-content:center;margin-top:8px;color:var(--dim);font-size:13px}
 </style>
@@ -419,8 +437,17 @@ function statsHtml(groups) {
   }).join("")}</div>`).join("");
 }
 
+function boxHtml(title, cols, rows) {
+  if (!rows.length) return "";
+  return `<div class="panel"><h4 style="margin:10px 0 4px;font-size:13px">${esc(title)}</h4><div class="box"><table>
+    <tr><th>#</th><th>Igrač</th>${cols.map(c => `<th>${esc(c)}</th>`).join("")}</tr>
+    ${rows.map(r => `<tr class="${r.starter ? "st" : ""}"><td>${esc(r.no ?? "")}</td><td>${esc(r.name)}</td>${r.v.map(v => `<td>${esc(v)}</td>`).join("")}</tr>`).join("")}
+  </table></div></div>`;
+}
+const ratingColor = r => r >= 8 ? "#1a9e5a" : r >= 7 ? "#3fb76d" : r >= 6 ? "#e8a33d" : "#d9534f";
+
 /* ---------- detail: football ---------- */
-const FM_STAT_SR = { "Top stats": "Najvažnije", "Shots": "Šutevi", "Expected goals (xG)": "Očekivani golovi (xG)", "Passes": "Dodavanja", "Defence": "Odbrana", "Duels": "Duelovi", "Discipline": "Disciplina", "Ball possession": "Posed lopte", "Total shots": "Ukupno šuteva", "Shots on target": "Šutevi u okvir", "Big chances": "Velike šanse", "Corners": "Korneri", "Fouls committed": "Prekršaji", "Yellow cards": "Žuti kartoni", "Red cards": "Crveni kartoni", "Offsides": "Ofsajdi", "Accurate passes": "Tačna dodavanja", "Passes": "Dodavanja" };
+const FM_STAT_SR = { "Touches in opposition box": "Dodiri u kaznenom prostoru", "Big chances missed": "Promašene velike šanse", "Shots off target": "Šutevi van okvira", "Blocked shots": "Blokirani šutevi", "Hit woodwork": "Pogoci u okvir gola", "Shots inside box": "Šutevi iz kaznenog prostora", "Shots outside box": "Šutevi izvan kaznenog prostora", "xG open play": "xG iz igre", "xG set play": "xG iz prekida", "Non-penalty xG": "xG bez penala", "xG on target (xGOT)": "xG u okvir (xGOT)", "Own half": "Na svojoj polovini", "Opposition half": "Na protivničkoj polovini", "Accurate long balls": "Tačne duge lopte", "Accurate crosses": "Tačni centaršutevi", "Throws": "Ubacivanja iz auta", "Touches": "Dodiri", "Tackles won": "Uspešna uklizavanja", "Interceptions": "Presečene lopte", "Blocks": "Blokade", "Clearances": "Izbijanja", "Keeper saves": "Odbrane golmana", "Duels won": "Dobijeni dueli", "Ground duels won": "Dobijeni dueli na zemlji", "Aerial duels won": "Dobijeni dueli u vazduhu", "Successful dribbles": "Uspešni driblinzi", "Free kicks": "Slobodni udarci", "Expected goals": "Očekivani golovi",  "Top stats": "Najvažnije", "Shots": "Šutevi", "Expected goals (xG)": "Očekivani golovi (xG)", "Passes": "Dodavanja", "Defence": "Odbrana", "Duels": "Duelovi", "Discipline": "Disciplina", "Ball possession": "Posed lopte", "Total shots": "Ukupno šuteva", "Shots on target": "Šutevi u okvir", "Big chances": "Velike šanse", "Corners": "Korneri", "Fouls committed": "Prekršaji", "Yellow cards": "Žuti kartoni", "Red cards": "Crveni kartoni", "Offsides": "Ofsajdi", "Accurate passes": "Tačna dodavanja", "Passes": "Dodavanja" };
 const sr = s => FM_STAT_SR[s] || s;
 
 function fmIncidents(evts, e) {
@@ -441,6 +468,37 @@ function fmIncidents(evts, e) {
     const cell = `${icon} ${esc(body)}${sub ? `<small>${esc(sub)}</small>` : ""}`;
     return `<div class="inc"><div class="l">${side === "l" ? cell : ""}</div><div class="m">${esc(t)}'</div><div>${side === "r" ? cell : ""}</div></div>`;
   }).join("");
+}
+
+const FM_PSTAT_SR = { "FotMob rating": "Ocena", "Minutes played": "Minuti", "Goals": "Golovi", "Assists": "Asistencije", "Expected assists (xA)": "Očekivane asistencije (xA)", "Expected goals (xG)": "Očekivani golovi (xG)", "Accurate passes": "Tačna dodavanja", "Chances created": "Stvorene šanse", "Defensive actions": "Defanzivne akcije", "Touches": "Dodiri", "Touches in opposition box": "Dodiri u kaznenom prostoru", "Successful dribbles": "Uspešni driblinzi", "Passes into final third": "Dodavanja u poslednju trećinu", "Accurate crosses": "Tačni centaršutevi", "Accurate long balls": "Tačne duge lopte", "Corners": "Korneri", "Dispossessed": "Izgubljene lopte", "Tackles": "Uklizavanja", "Blocks": "Blokade", "Clearances": "Izbijanja", "Interceptions": "Presečene lopte", "Recoveries": "Povraćene lopte", "Dribbled past": "Predriblan", "Ground duels won": "Dobijeni dueli na zemlji", "Aerial duels won": "Dobijeni dueli u vazduhu", "Was fouled": "Fauliran", "Fouls committed": "Prekršaji", "Duels won": "Dobijeni dueli", "Duels lost": "Izgubljeni dueli", "Total shots": "Šutevi", "Shots on target": "Šutevi u okvir", "Saves": "Odbrane", "Goals conceded": "Primljeni golovi", "Top stats": "Najvažnije", "Attack": "Napad", "Defense": "Odbrana", "Duels": "Duelovi", "Goalkeeping": "Golman" };
+const psr = s => FM_PSTAT_SR[s] || s;
+function fmPlayers(c, g) {
+  const ps = c.playerStats || {};
+  const fmt = st => { if (!st || st.value === null || st.value === undefined) return null;
+    if (st.total !== undefined && st.total !== null) { const pc = st.total ? Math.round(st.value / st.total * 100) : 0; return `${st.value}/${st.total} (${pc}%)`; }
+    return typeof st.value === "number" && !Number.isInteger(st.value) ? st.value.toFixed(2) : String(st.value); };
+  const teams = [[g.homeTeam && g.homeTeam.id, g.homeTeam && g.homeTeam.name], [g.awayTeam && g.awayTeam.id, g.awayTeam && g.awayTeam.name]];
+  const out = teams.map(([tid, tname]) => {
+    const list = Object.values(ps).filter(p => String(p.teamId) === String(tid) && p.stats && p.stats.length).map(p => {
+      const groups = p.stats.map(gr => ({ title: psr(gr.title), rows: Object.entries(gr.stats || {}).filter(([k, v]) => v && v.stat && v.stat.type !== "boolean").map(([k, v]) => [psr(k), fmt(v.stat)]).filter(x => x[1] !== null) })).filter(gr => gr.rows.length);
+      const get = k => { for (const gr of p.stats) { const v = gr.stats && gr.stats[k]; if (v && v.stat) return v.stat.value; } return null; };
+      return { name: p.name, no: p.shirtNumber, r: num(get("FotMob rating")), min: get("Minutes played"), gl: get("Goals") || 0, as: get("Assists") || 0, groups };
+    }).sort((a, b) => (b.r || 0) - (a.r || 0));
+    if (!list.length) return "";
+    return `<div class="panel"><div class="pph"><span>${esc(tname || "")}</span><span>Ocena</span><span>Min</span><span>G</span><span>A</span></div>
+      ${list.map(p => `<details class="pp"><summary><span>${esc(p.name)}</span><b class="r" style="background:${p.r ? ratingColor(p.r) : "transparent"}">${p.r ? p.r.toFixed(1) : "–"}</b><em>${p.min ?? "–"}'</em><em>${p.gl || ""}</em><em>${p.as || ""}</em></summary>
+        <div class="ppd">${p.groups.map(gr => `<h5>${esc(gr.title)}</h5>${gr.rows.map(([k, v]) => `<div><span>${esc(k)}</span><span>${esc(v)}</span></div>`).join("")}`).join("")}</div></details>`).join("")}</div>`;
+  }).join("");
+  return out || `<div class="panel"><div class="note">Statistika igrača još nije dostupna.</div></div>`;
+}
+
+function fmStatGroups(c) {
+  const per = (((c.stats || {}).Periods) || {}).All;
+  return ((per && per.stats) || []).map(gr => ({
+    title: sr(gr.title || ""),
+    items: (gr.stats || []).filter(s => s.type !== "title" && Array.isArray(s.stats) && s.stats[0] !== null && s.stats[0] !== undefined)
+      .map(s => ({ name: sr(s.title), h: s.stats[0], a: s.stats[1] })),
+  })).filter(gr => gr.items.length);
 }
 
 function fmLineup(side) {
@@ -487,7 +545,7 @@ async function showFmMatch(id, tab) {
     home: { name: ht.name, logo: fmTeamLogo(g.homeTeam && g.homeTeam.id || ht.id) }, away: { name: at.name, logo: fmTeamLogo(g.awayTeam && g.awayTeam.id || at.id) },
     hs: st.k === "ns" ? null : ht.score, as: st.k === "ns" ? null : at.score,
   };
-  const tabs = [["ov", "Pregled"], ["st", "Statistika"], ["lu", "Postave"], ["tb", "Tabela"]];
+  const tabs = [["ov", "Pregled"], ["st", "Statistika"], ["pl", "Igrači"], ["lu", "Postave"], ["tb", "Tabela"]];
   const cur = tab || "ov";
   let body = "";
   if (cur === "ov") {
@@ -498,15 +556,13 @@ async function showFmMatch(id, tab) {
     if (info.Referee && info.Referee.text) lines.push("Sudija: " + info.Referee.text);
     if (info.Attendance) lines.push("Gledalaca: " + info.Attendance);
     const inc = fmIncidents(evs.slice().sort((a, b) => (a.time || 0) - (b.time || 0)), e);
-    body = `<div class="panel">${inc || `<div class="note">Još nema događaja.</div>`}</div>` + (lines.length ? `<div class="panel"><div class="note" style="text-align:left">${lines.map(esc).join("<br>")}</div></div>` : "");
+    const top = fmStatGroups(c)[0];
+    body = `<div class="panel">${inc || `<div class="note">Još nema događaja.</div>`}</div>` + (top ? `<div class="panel">${statsHtml([top])}<a class="note" style="display:block" href="#/m/fm/${id}/st">Sva statistika ›</a></div>` : "") + (lines.length ? `<div class="panel"><div class="note" style="text-align:left">${lines.map(esc).join("<br>")}</div></div>` : "");
   } else if (cur === "st") {
-    const per = (((c.stats || {}).Periods) || {}).All;
-    const groups = ((per && per.stats) || []).map(gr => ({
-      title: sr(gr.title || ""),
-      items: (gr.stats || []).filter(s => s.type !== "title" && Array.isArray(s.stats) && s.stats[0] !== null && s.stats[0] !== undefined)
-        .map(s => ({ name: sr(s.title), h: s.stats[0], a: s.stats[1] })),
-    })).filter(gr => gr.items.length);
+    const groups = fmStatGroups(c);
     body = groups.length ? `<div class="panel">${statsHtml(groups)}</div>` : `<div class="panel"><div class="note">Statistika još nije dostupna.</div></div>`;
+  } else if (cur === "pl") {
+    body = fmPlayers(c, g);
   } else if (cur === "lu") {
     const lu = c.lineup;
     body = lu ? `<div class="panel"><div class="lu"><div>${fmLineup(lu.homeTeam)}</div><div>${fmLineup(lu.awayTeam)}</div></div>${lu.lineupType === "predicted" ? `<div class="note">Očekivana postava</div>` : ""}</div>` : `<div class="panel"><div class="note">Postave još nisu objavljene.</div></div>`;
@@ -540,8 +596,11 @@ async function showLeague(id) {
   } catch (err) { m.innerHTML = back() + `<div class="err">Liga nije dostupna (${esc(err.message)})</div>`; }
 }
 
+const ESPN_SR = { "FG": "Šut iz igre", "Field Goal %": "Šut iz igre %", "3PT": "Šut za 3", "Three Point %": "Šut za 3 %", "FT": "Slobodna bacanja", "Free Throw %": "Slobodna bacanja %", "Rebounds": "Skokovi", "Offensive Rebounds": "Skokovi u napadu", "Defensive Rebounds": "Skokovi u odbrani", "Assists": "Asistencije", "Steals": "Ukradene lopte", "Blocks": "Blokade", "Turnovers": "Izgubljene lopte", "Team Turnovers": "Timske izgubljene lopte", "Total Turnovers": "Ukupno izgubljenih", "Technical Fouls": "Tehničke greške", "Total Technical Fouls": "Ukupno tehničkih", "Flagrant Fouls": "Nesportske greške", "Turnover Points": "Poeni posle izgubljenih", "Fast Break Points": "Poeni iz kontre", "Points in Paint": "Poeni u reketu", "Fouls": "Faulovi", "Largest Lead": "Najveće vođstvo", "Shots": "Šutevi", "Hits": "Udarci telom", "Faceoffs Won": "Dobijena vbacivanja", "Power Play Goals": "Golovi sa igračem više", "Penalty Minutes": "Kaznene minute", "Takeaways": "Oduzete pakove", "Giveaways": "Izgubljeni pakovi", "Blocked Shots": "Blokirani šutevi", "Saves": "Odbrane" };
+const esr = s => ESPN_SR[s] || s;
+
 /* ---------- detail: ESPN ---------- */
-async function showEspnMatch(path, id) {
+async function showEspnMatch(path, id, tab) {
   const m = $("#main");
   if (m.dataset.shown !== location.hash) m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
   m.dataset.shown = location.hash;
@@ -577,18 +636,37 @@ async function showEspnMatch(path, id) {
       const homeFirst = teams[0].team && e.home && String(teams[0].team.displayName) === String(e.home.name);
       const A = homeFirst ? teams[0] : teams[1], B = homeFirst ? teams[1] : teams[0];
       const bm = new Map((B.statistics || []).map(s => [s.label || s.name, s.displayValue]));
-      const items = (A.statistics || []).filter(s => bm.has(s.label || s.name)).map(s => ({ name: s.label || s.name, h: s.displayValue, a: bm.get(s.label || s.name) }));
-      if (items.length) stats = `<div class="panel">${statsHtml([{ title: "Pregled", items }])}</div>`;
+      const items = (A.statistics || []).filter(s => bm.has(s.label || s.name)).map(s => ({ name: esr(s.label || s.name), h: s.displayValue, a: bm.get(s.label || s.name) }));
+      if (items.length) stats = `<div class="panel">${statsHtml([{ title: "Timovi", items }])}</div>`;
     }
-    const lsH = (e.sets && e.sets[0]) || [], lsA = (e.sets && e.sets[1]) || [];
+    // player box score: home team first
+    const pls = ((j.boxscore || {}).players) || [];
+    const ordered = pls.slice().sort((x, y) => (String(x.team && x.team.displayName) === String(e.home.name) ? -1 : 0) - (String(y.team && y.team.displayName) === String(e.home.name) ? -1 : 0));
+    const players = ordered.map(t => (t.statistics || []).map(grp => {
+      const rows = (grp.athletes || []).filter(a => !a.didNotPlay && a.stats && a.stats.length).map(a => ({ name: a.athlete && a.athlete.displayName, no: a.athlete && a.athlete.jersey, starter: a.starter, v: a.stats }));
+      return boxHtml((t.team && t.team.displayName || "") + (t.statistics.length > 1 && grp.name ? " · " + grp.name : ""), grp.labels || [], rows);
+    }).join("")).join("");
+    const tabs = [["st", "Statistika"], ["pl", "Igrači"]].filter(([k]) => k === "st" || players);
+    const cur = tab === "pl" && players ? "pl" : "st";
     const venue = ((j.gameInfo || {}).venue || {}).fullName;
-    m.innerHTML = back() + hdr(e, setsRow(e)) + `<div style="height:12px"></div>` + (stats || `<div class="panel"><div class="note">Detaljna statistika nije dostupna.</div></div>`) + (venue ? `<div class="note">${esc(venue)}</div>` : "");
-    detailTimer(() => showEspnMatch(path, id), e.st.k === "live" ? 10 : 0);
+    const body = cur === "pl" ? players : (stats || `<div class="panel"><div class="note">${e.st.k === "ns" ? "Statistika će biti dostupna kad meč počne." : "Detaljna statistika nije dostupna."}</div></div>`);
+    m.innerHTML = back() + hdr(e, setsRow(e)) + (tabs.length > 1 ? `<div class="tabs">${tabs.map(([k, l]) => `<a class="chip ${k === cur ? "on" : ""}" href="#/m/espn/${path}/${id}/${k}">${l}</a>`).join("")}</div>` : `<div style="height:12px"></div>`) + body + (venue ? `<div class="note">${esc(venue)}</div>` : "");
+    detailTimer(() => showEspnMatch(path, id, cur), e.st.k === "live" ? 10 : 0);
   } catch (err) { m.innerHTML = back() + `<div class="err">Događaj nije dostupan (${esc(err.message)})</div>`; }
 }
 
 /* ---------- detail: EuroLeague ---------- */
-async function showElMatch(c, code) {
+function elName(x) { const p = String(x || "").split(",").map(t => t.trim()); const cap = t => t.toLowerCase().replace(/(^|[\s-])\S/g, m => m.toUpperCase()); return p.length === 2 ? cap(p[1]) + " " + cap(p[0]) : cap(x || ""); }
+function elTeamStats(h, a) {
+  const pct = (o, m, at) => { const mm = o[m] || 0, aa = o[at] || 0; return `${mm}/${aa} (${aa ? Math.round(mm / aa * 100) : 0}%)`; };
+  const pair = (n, m, at) => ({ name: n, h: pct(h, m, at), a: pct(a, m, at) });
+  const one = (n, k) => ({ name: n, h: h[k] ?? 0, a: a[k] ?? 0 });
+  return [pair("Šut za 2", "FieldGoalsMade2", "FieldGoalsAttempted2"), pair("Šut za 3", "FieldGoalsMade3", "FieldGoalsAttempted3"), pair("Slobodna bacanja", "FreeThrowsMade", "FreeThrowsAttempted"),
+    one("Skokovi", "TotalRebounds"), one("Skokovi u napadu", "OffensiveRebounds"), one("Skokovi u odbrani", "DefensiveRebounds"), one("Asistencije", "Assistances"),
+    one("Ukradene lopte", "Steals"), one("Blokade", "BlocksFavour"), one("Izgubljene lopte", "Turnovers"), one("Faulovi", "FoulsCommited"), one("PIR", "Valuation")];
+}
+
+async function showElMatch(c, code, tab) {
   const m = $("#main");
   if (m.dataset.shown !== location.hash) m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
   m.dataset.shown = location.hash;
@@ -601,16 +679,35 @@ async function showElMatch(c, code) {
       home: { name: g.h.name, logo: g.h.logo }, away: { name: g.a.name, logo: g.a.logo },
       hs: g.played ? g.hs : null, as: g.played ? g.as : null, sets: g.played ? [g.hp, g.ap] : null };
     const now = Date.now();
-    if (!g.played && start <= now + 60000 && now - start < 4 * 36e5) {
+    const season = `${c}${j.season}`;
+    const running = !g.played && start <= now + 60000 && now - start < 4 * 36e5;
+    if (running) {
       try {
-        const h = await getJSON(`https://live.euroleague.net/api/Header?gamecode=${code}&seasoncode=${c}${j.season}`, 8);
+        const h = await getJSON(`https://live.euroleague.net/api/Header?gamecode=${code}&seasoncode=${season}`, 8);
         const q = [1, 2, 3, 4].map(i => [num(h["ScoreQuarter" + i + "A"]), num(h["ScoreQuarter" + i + "B"])]);
         const per = k => { let prev = 0; const o = []; for (const v of q.map(x => x[k])) { if (!v || v <= 0) break; o.push(v - prev); prev = v; } return o; };
         if (h.Live) { const qq = String(h.Quarter || "").trim(); e.st = { k: "live", label: (/^\d+$/.test(qq) ? "Q" + qq : qq) + " " + String(h.RemainingPartialTime || "").trim() }; e.hs = num(h.ScoreA); e.as = num(h.ScoreB); e.sets = [per(0), per(1)]; }
+        else if ((num(h.ScoreA) || 0) > 0 && now - start > 90 * 60000) { e.st = { k: "ft", label: "Kraj" }; e.hs = num(h.ScoreA); e.as = num(h.ScoreB); e.sets = [per(0), per(1)]; }
       } catch (err) {}
     }
-    m.innerHTML = back() + hdr(e, setsRow(e)) + `<div class="note">Za detaljnu statistiku košarke koristi aplikaciju.</div>`;
-    detailTimer(() => showElMatch(c, code), e.st.k === "live" ? 10 : 0);
+    let box = null;
+    if (e.st.k !== "ns") { try { box = await getJSON(`https://live.euroleague.net/api/Boxscore?gamecode=${code}&seasoncode=${season}`, e.st.k === "live" ? 8 : 300); } catch (err) {} }
+    const S = (box && box.Stats) || [];
+    const teamStats = S.length >= 2 && S[0].totr && S[1].totr ? `<div class="panel">${statsHtml([{ title: "Timovi", items: elTeamStats(S[0].totr, S[1].totr) }])}</div>` : "";
+    const cols = ["MIN", "PTS", "REB", "AST", "STL", "BLK", "TO", "2P", "3P", "FT", "PIR", "+/-"];
+    const players = S.slice(0, 2).map((t, i) => boxHtml(i === 0 ? e.home.name : e.away.name, cols, (t.PlayersStats || []).filter(p => p.Minutes && p.Minutes !== "DNP").map(p => ({
+      name: elName(p.Player), no: p.Dorsal, starter: p.IsStarter === 1,
+      v: [String(p.Minutes || "").split(":")[0], p.Points, p.TotalRebounds, p.Assistances, p.Steals, p.BlocksFavour, p.Turnovers,
+        `${p.FieldGoalsMade2}/${p.FieldGoalsAttempted2}`, `${p.FieldGoalsMade3}/${p.FieldGoalsAttempted3}`, `${p.FreeThrowsMade}/${p.FreeThrowsAttempted}`, p.Valuation, p.Plusminus],
+    })))).join("");
+    const info = [box && box.Referees ? "Sudije: " + box.Referees : "", box && box.Attendance && box.Attendance !== "0" ? "Gledalaca: " + box.Attendance : ""].filter(Boolean);
+    const cur = tab === "pl" ? "pl" : "st";
+    let body;
+    if (e.st.k === "ns") body = `<div class="panel"><div class="note">Statistika će biti dostupna kad utakmica počne.</div></div>`;
+    else body = cur === "pl" ? (players || `<div class="panel"><div class="note">Statistika igrača nije dostupna.</div></div>`) : (teamStats || `<div class="panel"><div class="note">Statistika još nije dostupna.</div></div>`);
+    const tabs = e.st.k === "ns" ? "" : `<div class="tabs">${[["st", "Statistika"], ["pl", "Igrači"]].map(([k, l]) => `<a class="chip ${k === cur ? "on" : ""}" href="#/m/el/${c}/${code}/${k}">${l}</a>`).join("")}</div>`;
+    m.innerHTML = back() + hdr(e, setsRow(e)) + (tabs || `<div style="height:12px"></div>`) + body + (info.length ? `<div class="note">${info.map(esc).join("<br>")}</div>` : "");
+    detailTimer(() => showElMatch(c, code, cur), e.st.k === "live" ? 10 : 0);
   } catch (err) { m.innerHTML = back() + `<div class="err">Utakmica nije dostupna (${esc(err.message)})</div>`; }
 }
 
@@ -629,8 +726,8 @@ function route() {
   const h = location.hash || "#/";
   let r;
   if ((r = /^#\/m\/fm\/(\d+)(?:\/(\w+))?$/.exec(h))) showFmMatch(r[1], r[2]);
-  else if ((r = /^#\/m\/espn\/(.+)\/(\d+)$/.exec(h))) showEspnMatch(r[1], r[2]);
-  else if ((r = /^#\/m\/el\/(\w+)\/(\d+)$/.exec(h))) showElMatch(r[1], r[2]);
+  else if ((r = /^#\/m\/espn\/([\w-]+\/[\w.-]+)\/(\d+)(?:\/(st|pl))?$/.exec(h))) showEspnMatch(r[1], r[2], r[3]);
+  else if ((r = /^#\/m\/el\/(\w+)\/(\d+)(?:\/(st|pl))?$/.exec(h))) showElMatch(r[1], r[2], r[3]);
   else if ((r = /^#\/l\/(\d+)$/.exec(h))) showLeague(r[1]);
   else { $("#main").dataset.shown = ""; renderList(); window.scrollTo(0, lastScroll); return; }
   window.scrollTo(0, 0);
