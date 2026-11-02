@@ -1,4 +1,15 @@
-GET 200 acao=* len=13718 https://live.euroleague.net/api/Boxscore?gamecode=1&seasoncode=E2026
-OPTIONS 200 acao=* len=0 https://live.euroleague.net/api/Boxscore?gamecode=1&seasoncode=E2026
-GET 200 acao=* len=933 https://live.euroleague.net/api/Header?gamecode=1&seasoncode=E2026
-OPTIONS 200 acao=* len=0 https://live.euroleague.net/api/Header?gamecode=1&seasoncode=E2026
+mobile       date  200 acao=None len=21328 stages=18 aba=[(None, 'Adriatic', 'ABA League: Group B')]
+    PARTIZAN: None|Adriatic Partizan - U-BT Cluj-Napoca Eps=3Q 66:62 Esd=20261102130000
+    comps: NBA/NBA(2); Europe Cup/FIBA Europe Cup(1); Argentina/Argentina(2); Australia/Australia(1); Brazil/Brazil(3); Bulgaria/Bulgaria(1); China/China(2); Cyprus/Cyprus(1); France/France(2); Greece/Greece(1); Israel/Israel(3); Italy/Italy(2); Lithuania/Lithuania(2); South Korea/South Korea(1); South Korea/South Korea(1); Turkiye/Turkiye(2); NCAA/NCAA(17); Adriatic/Adriatic(3)
+mobile       live  200 acao=None len=1809 stages=2 aba=[(None, 'Adriatic', 'ABA League: Group B')]
+    PARTIZAN: None|Adriatic Partizan - U-BT Cluj-Napoca Eps=3Q 66:62 Esd=20261102130000
+desk         date  200 acao=None len=21328 stages=18 aba=[(None, 'Adriatic', 'ABA League: Group B')]
+    PARTIZAN: None|Adriatic Partizan - U-BT Cluj-Napoca Eps=3Q 66:62 Esd=20261102130000
+desk         live  200 acao=None len=1809 stages=2 aba=[(None, 'Adriatic', 'ABA League: Group B')]
+    PARTIZAN: None|Adriatic Partizan - U-BT Cluj-Napoca Eps=3Q 66:62 Esd=20261102130000
+desk+origin  date  403 acao=None len=20
+desk+origin  live  403 acao=None len=20
+bare         date  200 acao=None len=21328 stages=18 aba=[(None, 'Adriatic', 'ABA League: Group B')]
+    PARTIZAN: None|Adriatic Partizan - U-BT Cluj-Napoca Eps=3Q 66:62 Esd=20261102130000
+bare         live  200 acao=None len=1809 stages=2 aba=[(None, 'Adriatic', 'ABA League: Group B')]
+    PARTIZAN: None|Adriatic Partizan - U-BT Cluj-Napoca Eps=3Q 66:62 Esd=20261102130000
