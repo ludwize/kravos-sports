@@ -28,7 +28,7 @@ object Ranking {
         return when {
             youth -> 7
             OTHER_CONT.any { n.contains(it) } -> 6
-            c == "SRB" -> 1
+            c == "SRB" || c == "ABA" -> 1
             (c == "INT" || c == "INT-2" || c == "EUR") && TOP_INT.any { n.contains(it) } -> 2
             c == "EUR" || n.contains("uefa") || n.contains("fiba") -> 2
             c == "INT" || c == "INT-2" -> 3

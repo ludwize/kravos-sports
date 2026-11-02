@@ -37,9 +37,10 @@ class LiveScore(private val net: Net) {
 
     private fun parseStages(root: JSONObject, sport: Sport, off: Int): List<Event> =
         root.arr("Stages").mapObj { st ->
-            val comp = st.str("CompN") ?: st.str("Cnm") ?: ""
+            val aba = st.str("Cnm").equals("Adriatic", true) || st.str("Snm")?.contains("ABA League", true) == true
+            val comp = if (aba) "ABA liga" else st.str("CompN") ?: st.str("Cnm") ?: ""
             if (comp.lowercase().replace(" ", "") in SKIP) return@mapObj null
-            val stageName = st.str("Snm")
+            val stageName = if (aba) st.str("Snm")?.substringAfter(':', "")?.trim()?.replace("Group", "Grupa")?.ifBlank { null } else st.str("Snm")
             val country = st.str("CompD") ?: st.str("Cnm")
             val t = Tournament(
                 key = null,
@@ -99,6 +100,7 @@ class LiveScore(private val net: Net) {
 
     private fun lsClock(eps: String, sport: Sport): String = when {
         eps.matches(Regex("Q\\d")) -> "${eps.drop(1)}. četv."
+        eps.matches(Regex("\\dQ")) -> "${eps.take(1)}. četv."
         eps == "HT" -> "Poluvreme"
         eps == "OT" -> "Produžetak"
         eps.matches(Regex("S\\d")) -> "${eps.drop(1)}. set"

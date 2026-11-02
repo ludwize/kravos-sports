@@ -317,12 +317,24 @@ async function elDay(date) {
   return evs;
 }
 
+/* ---------- data: LiveScore snapshot (ABA and other basketball) ---------- */
+async function lsDay(date) {
+  const j = await getJSON("ls.json?" + Math.floor(Date.now() / 60000), 50);
+  const age = Math.max(0, Math.round((Date.now() / 1000 - j.built) / 60));
+  return j.events.filter(g => sameDay(new Date(g.utc), date)).map(g => ({
+    key: "ls:" + g.id, href: "#/m/ls/" + g.id, sport: "basketball", start: Date.parse(g.utc), st: g.st,
+    league: { key: "ls:" + g.lg + g.sub, name: g.lg + (g.sub ? " · " + g.sub : ""), country: g.cc, logo: null, snap: age },
+    home: g.h, away: g.a, hs: g.hs, as: g.as, sets: g.hp && g.hp.length ? [g.hp, g.ap] : null,
+  }));
+}
+
 /* ---------- list view ---------- */
 const FM_ORDER = ["fm:42", "fm:73", "fm:10216", "fm:77", "fm:50", "fm:9806", "el:E", "el:U", "fm:182", "fm:9497", "fm:47", "fm:87", "fm:55", "fm:54", "fm:53"];
 const BIG = new Set(["ENG", "ESP", "ITA", "GER", "FRA"]);
 function tier(l) {
   const i = FM_ORDER.indexOf(l.key); if (i >= 0) return [i < 8 ? 0 : 1, i];
   if (l.country === "SRB") return [1, 20];
+  if (l.country === "ABA") return [1, 10];
   if (l.country === "INT" || l.country === "EUR") return [2, 0];
   if (BIG.has(l.country)) return [3, 0];
   if (/^(atp|wta)/i.test(l.name)) return [2, 5];
@@ -333,7 +345,7 @@ async function loadEvents() {
   const sp = state.sport, d = new Date(state.date);
   if (sp === "football") return fmDay(d);
   if (sp === "basketball") {
-    const r = await Promise.allSettled([elDay(d), espnDay("basketball", d)]);
+    const r = await Promise.allSettled([elDay(d), espnDay("basketball", d), lsDay(d)]);
     const ok = r.filter(x => x.status === "fulfilled");
     if (!ok.length) throw r[0].reason;
     return ok.flatMap(x => x.value);
@@ -408,7 +420,8 @@ function renderList() {
   });
   m.innerHTML = list.map(g => {
     g.evs.sort((a, b) => (a.st.k === "live" ? -1 : 0) - (b.st.k === "live" ? -1 : 0) || a.start - b.start);
-    const head = `${g.l.logo ? `<img loading="lazy" src="${esc(g.l.logo)}" alt="">` : ""}<span>${esc(g.l.name)}${g.l.country && g.l.country.length === 3 && !["INT", "EUR", "USA"].includes(g.l.country) ? ` <span class="c">· ${esc(g.l.country)}</span>` : ""}</span>`;
+    const snap = g.l.snap !== undefined && g.evs.some(e => e.st.k === "live") ? ` <span class="c">· osveženo pre ${g.l.snap} min</span>` : "";
+    const head = `${g.l.logo ? `<img loading="lazy" src="${esc(g.l.logo)}" alt="">` : ""}<span>${esc(g.l.name)}${g.l.country && g.l.country.length === 3 && !["INT", "EUR", "USA", "ABA"].includes(g.l.country) ? ` <span class="c">· ${esc(g.l.country)}</span>` : ""}${snap}</span>`;
     return `<section class="lg"><h3>${g.l.link ? `<a href="${g.l.link}">${head}</a>` : `<a>${head}</a>`}</h3>${g.evs.map(evRow).join("")}</section>`;
   }).join("");
 }
@@ -711,6 +724,21 @@ async function showElMatch(c, code, tab) {
   } catch (err) { m.innerHTML = back() + `<div class="err">Utakmica nije dostupna (${esc(err.message)})</div>`; }
 }
 
+async function showLsMatch(id) {
+  const m = $("#main");
+  if (m.dataset.shown !== location.hash) m.innerHTML = back() + `<div class="empty spin">Učitavam…</div>`;
+  m.dataset.shown = location.hash;
+  try {
+    const j = await getJSON("ls.json?" + Math.floor(Date.now() / 60000), 50);
+    const g = j.events.find(x => String(x.id) === String(id));
+    if (!g) throw new Error("utakmica nije pronađena");
+    const age = Math.max(0, Math.round((Date.now() / 1000 - j.built) / 60));
+    const e = { league: { name: g.lg + (g.sub ? " · " + g.sub : "") }, start: Date.parse(g.utc), st: g.st, home: g.h, away: g.a, hs: g.hs, as: g.as, sets: g.hp && g.hp.length ? [g.hp, g.ap] : null };
+    m.innerHTML = back() + hdr(e, setsRow(e)) + `<div class="note">${g.st.k === "live" ? `Rezultat se osvežava na nekoliko minuta (poslednje pre ${age} min).<br>` : ""}Detaljna statistika za ovu ligu nije dostupna na webu.</div>`;
+    detailTimer(() => showLsMatch(id), g.st.k === "live" ? 60 : 0);
+  } catch (err) { m.innerHTML = back() + `<div class="err">Utakmica nije dostupna (${esc(err.message)})</div>`; }
+}
+
 /* ---------- routing ---------- */
 let dtimer = null;
 function detailTimer(fn, sec) {
@@ -728,6 +756,7 @@ function route() {
   if ((r = /^#\/m\/fm\/(\d+)(?:\/(\w+))?$/.exec(h))) showFmMatch(r[1], r[2]);
   else if ((r = /^#\/m\/espn\/([\w-]+\/[\w.-]+)\/(\d+)(?:\/(st|pl))?$/.exec(h))) showEspnMatch(r[1], r[2], r[3]);
   else if ((r = /^#\/m\/el\/(\w+)\/(\d+)(?:\/(st|pl))?$/.exec(h))) showElMatch(r[1], r[2], r[3]);
+  else if ((r = /^#\/m\/ls\/(\d+)$/.exec(h))) showLsMatch(r[1]);
   else if ((r = /^#\/l\/(\d+)$/.exec(h))) showLeague(r[1]);
   else { $("#main").dataset.shown = ""; renderList(); window.scrollTo(0, lastScroll); return; }
   window.scrollTo(0, 0);
