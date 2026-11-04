@@ -28,7 +28,8 @@ concurrency:
 
 jobs:
   guard:
-    # a cron run is only a backup: skip it when the chain is alive (a web run started in the last 15 min)
+    # a cron run is only a backup: skip it when the chain is alive (a chained run started in the last 15 min).
+    # The chain only yields to another chained run, never to a cron run, so the two can't wait on each other.
     runs-on: ubuntu-latest
     outputs:
       skip: ${{ steps.g.outputs.skip }}
@@ -41,7 +42,7 @@ jobs:
           if [ "${{ github.event_name }}" = "schedule" ]; then
             since=$(date -u -d '15 minutes ago' +%Y-%m-%dT%H:%M:%SZ)
             n=$(gh api "repos/${{ github.repository }}/actions/workflows/web.yml/runs?per_page=20" \
-                --jq "[.workflow_runs[] | select(.id != ${{ github.run_id }} and .created_at > \"$since\")] | length")
+                --jq "[.workflow_runs[] | select(.id != ${{ github.run_id }} and .event == \"workflow_dispatch\" and .created_at > \"$since\")] | length")
             [ "$n" -gt 0 ] && skip=true
           fi
           echo "skip=$skip" >> "$GITHUB_OUTPUT"; echo "skip=$skip"
@@ -81,6 +82,6 @@ jobs:
         run: |
           sleep 300
           others=$(gh api "repos/${{ github.repository }}/actions/workflows/web.yml/runs?per_page=20" \
-            --jq '[.workflow_runs[] | select(.id != ${{ github.run_id }} and (.status == "queued" or .status == "in_progress" or .status == "waiting" or .status == "pending" or .status == "requested"))] | length')
-          if [ "$others" -gt 0 ]; then echo "another run is already queued; not chaining"; exit 0; fi
+            --jq '[.workflow_runs[] | select(.id != ${{ github.run_id }} and (.event == "workflow_dispatch" and (.status == "queued" or .status == "in_progress" or .status == "waiting" or .status == "pending" or .status == "requested")))] | length')
+          if [ "$others" -gt 0 ]; then echo "another chain run is already queued; not chaining"; exit 0; fi
           gh workflow run web.yml --repo "${{ github.repository }}" --ref main -f chain=true
