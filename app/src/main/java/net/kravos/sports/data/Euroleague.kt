@@ -32,7 +32,8 @@ class Euroleague(private val net: Net) {
         val code = c?.str("code") ?: "?"
         return Team(
             key = "${Src.EL}:$code",
-            name = c?.str("editorialName") ?: c?.str("abbreviatedName") ?: code,
+            // editorialName is a nickname ("Real", "Barca", "Hapoel"); name is the full club name
+            name = c?.str("name") ?: c?.str("abbreviatedName") ?: c?.str("editorialName") ?: code,
             shortName = c?.str("abbreviatedName") ?: c?.str("editorialName") ?: code,
             code = c?.str("tvCode") ?: code,
             logo = c?.obj("images")?.str("crest"),

@@ -100,7 +100,7 @@ def num(v):
 def club(c):
     c = c or {}
     code = c.get("code") or "?"
-    return {"code": code, "name": c.get("editorialName") or c.get("abbreviatedName") or code,
+    return {"code": code, "name": c.get("name") or c.get("abbreviatedName") or c.get("editorialName") or code,
             "short": c.get("abbreviatedName") or code, "logo": (c.get("images") or {}).get("crest")}
 
 
